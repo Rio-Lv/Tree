@@ -109,8 +109,12 @@ function Branch(props) {
             spacing={spacing}
             borderRadius={borderRadius}
           />
-          <ColumnRight>
-            {props.children}
+          <ColumnRight
+            style={{
+              minWidth: me ? "70px" : "0px",
+            }}
+          >
+            {/* {props.children} */}
             {branchOut ? branches : null}
             <BuildTools
               index={props.index}
@@ -150,9 +154,9 @@ export default Branch;
 const Box = styled.div`
   position: relative;
   margin: ${spacing}px;
-
   border-radius: ${borderRadius}px;
   transition: 0.3s;
+  overflow: hidden;
 `;
 const Row = styled.div`
   position: relative;
@@ -203,8 +207,9 @@ const DeleteDocument = styled.div`
   color: #ffffff;
   cursor: pointer;
   transition: 0.2s;
+  user-select: none;
   :hover {
-    color: #ff5c5c;
+    color: #000000;
   }
 `;
 

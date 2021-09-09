@@ -39,8 +39,10 @@ function BuildTools(props) {
   };
 
   useEffect(() => {
-    setAdd(props.me);
-  }, [props.me]);
+    if (!props.show) {
+      setAdd(false);
+    }
+  }, [props.show]);
 
   return (
     <Tools
@@ -73,7 +75,7 @@ function BuildTools(props) {
         style={{
           backgroundColor: `${props.color2}`,
           borderRadius: `${props.borderRadius}px`,
-          width: add ? `200px` : `30px`,
+          width: add ? `230px` : `30px`,
         }}
       >
         <div>
