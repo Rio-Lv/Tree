@@ -93,6 +93,7 @@ function BuildTools(props) {
           onClick={() => {
             if (!add) {
               setAdd(true);
+              document.getElementById(inputId).focus();
             } else {
               createDoc();
             }
@@ -160,6 +161,7 @@ const Input = styled.input`
   transition: 0.3s;
   border: 2px solid white;
   box-sizing: border-box;
+  text-indent: 12px;
   :focus {
     outline: none;
   }

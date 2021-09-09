@@ -172,8 +172,9 @@ const ColumnLeft = styled.div`
   transition: 0.3s;
 `;
 const CentralBox = styled.div`
+  min-width: 60px;
   position: relative;
-  text-align: center;
+  text-align: left;
   margin: auto;
 `;
 const This = styled.div`
