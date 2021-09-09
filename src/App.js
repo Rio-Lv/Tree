@@ -1,25 +1,86 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import styled from "styled-components";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+import { app } from "./firebase";
+
+import ProjectBuilder from "./DB_Build_Tools/project_tools/ProjectBuilder";
+import Branch from "./DB_Build_Tools/Tree/Branch";
+import Tree from "./DB_Build_Tools/Tree/Tree";
+
+const provider = new GoogleAuthProvider();
+const auth = getAuth();
 
 function App() {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        console.log("user is signed out");
+      }
+    });
+  }, []);
+  useEffect(() => {
+    if (user) {
+      // console.log(user.displayName);
+    }
+  }, [user]);
+
+  const GoogleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
+
+  const GoogleSignIn = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <button onClick={() => GoogleSignIn()}>SignIn</button>
+      <button onClick={() => GoogleSignOut()}>SignOut</button>
+      {user ? <div>{user.uid}</div> : null}
+      {/* <ProjectBuilder /> */}
+      <DisplayArea>
+        <Center>
+          <Tree name={"A"} />
+        </Center>
+      </DisplayArea>
     </div>
   );
 }
 
 export default App;
+
+const Center = styled.div`
+  margin-top: 50px;
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`;
+const DisplayArea = styled.div`
+  top: 0;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+`;
