@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
-const spacing = 5;
+const spacing = 4;
 const borderRadius = 7;
 
 const colors = [
@@ -36,6 +36,7 @@ function Branch(props) {
   const [branchOut, setBranchOut] = useState(true);
   const [branches, setBranches] = useState([]);
   const [add, setAdd] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     setDirectory(props.directory);
@@ -87,7 +88,7 @@ function Branch(props) {
         <Row>
           <ColumnLeft
             style={{
-              minWidth: me ? "120px" : "50px",
+              minWidth: me ? "100px" : "50px",
             }}
             onClick={() => {
               // console.log(props.name);
@@ -116,11 +117,11 @@ function Branch(props) {
               name={props.name}
               borderRadius={borderRadius}
               nextPath={`${props.path}/${props.id}/${props.id}`}
+              id={props.id}
               path={props.path}
               color1={colors[props.index + 0]}
               color2={colors[props.index + 1]}
               color3={colors[props.index + 2]}
-              Add={add}
               show={me}
             />
 
@@ -131,7 +132,10 @@ function Branch(props) {
           <DeleteDocument
             onClick={() => {
               console.log(`Deleting: ${props.path}/${props.id}`);
-              deleteDoc(doc(db, `${props.path}`, `${props.id}`));
+              setDeleting(true);
+              setTimeout(() => {
+                deleteDoc(doc(db, `${props.path}`, `${props.id}`));
+              }, 300);
             }}
           >
             +
@@ -146,7 +150,6 @@ export default Branch;
 const Box = styled.div`
   position: relative;
   margin: ${spacing}px;
-  /* margin-bottom: -${spacing}px; */
 
   border-radius: ${borderRadius}px;
   transition: 0.3s;
@@ -185,7 +188,6 @@ const ColumnRight = styled.div`
   position: relative;
   margin-bottom: -5px;
   overflow: hidden;
-  min-width: 50px;
 `;
 
 const DeleteDocument = styled.div`

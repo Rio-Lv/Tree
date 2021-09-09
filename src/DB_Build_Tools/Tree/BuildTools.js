@@ -58,7 +58,7 @@ function BuildTools(props) {
         marginTop: props.show ? "5px" : "0px",
       }}
     >
-      <EditData
+      {/* <EditData
         style={{
           backgroundColor: `${props.color1}`,
           borderRadius: `${props.borderRadius}px`,
@@ -68,7 +68,7 @@ function BuildTools(props) {
           src="https://img.icons8.com/material-rounded/24/ffffff/edit--v1.png"
           alt=""
         />
-      </EditData>
+      </EditData> */}
       <AddDocument
         style={{
           backgroundColor: `${props.color2}`,
@@ -81,7 +81,7 @@ function BuildTools(props) {
             <CenterBlock>
               <Input
                 style={{
-                  width: add ? "160px" : "0px",
+                  width: add ? "170px" : "0px",
                   opacity: add ? "100%" : "0%",
                 }}
                 type="text"
@@ -106,8 +106,9 @@ function BuildTools(props) {
             }
           }}
           style={{
+            userSelect: "none",
             fontSize: "30px",
-            transform: add ? `translate(10px)` : `translate(0,0)`,
+            transform: add ? `translate(4px)` : `translate(-2px,0)`,
           }}
         >
           +
@@ -122,7 +123,7 @@ export default BuildTools;
 const Tools = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 5px;
+  margin: 4px;
 
   position: relative;
   overflow: hidden;
@@ -140,10 +141,11 @@ const AddDocument = styled.div`
   font-weight: 600;
   font-size: 30px;
   line-height: 26px;
-  margin-right: 10px;
+  margin-right: 0px;
   box-sizing: border-box;
   border: 2px solid white;
   transition: 0.3s;
+  overflow: hidden;
 `;
 const EditData = styled.div`
   transition: 0.3s;
@@ -164,17 +166,20 @@ const InputBox = styled.div`
   flex-direction: row;
   box-sizing: border-box;
 
-  border-radius: 7px;
   transition: 0.3s;
 `;
 
 const Input = styled.input`
-  width: 160px;
-  height: 15px;
-  transform: translate(5px, 4px);
-  /* border: 2px solid white; */
-  border-radius: 7px;
+  width: 180px;
+  height: 100%;
+  margin-top: 1px;
+  transform: translate(1px, 0px);
+  /* Align radii */
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
   transition: 0.3s;
+  border: 1px solid white;
+  box-sizing: border-box;
 `;
 
 const CenterBlock = styled.div`
