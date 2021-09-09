@@ -55,6 +55,7 @@ function BuildTools(props) {
       }}
       style={{
         backgroundColor: `${props.color1}`,
+        width: add ? "240px" : "70px",
         height: props.show ? "50px" : "0px",
         opacity: props.show ? "100%" : "0%",
         marginTop: props.show ? "5px" : "0px",
@@ -75,7 +76,7 @@ function BuildTools(props) {
         style={{
           backgroundColor: `${props.color2}`,
           borderRadius: `${props.borderRadius}px`,
-          width: add ? `230px` : `30px`,
+          width: add ? `200px` : `30px`,
         }}
       >
         <div>

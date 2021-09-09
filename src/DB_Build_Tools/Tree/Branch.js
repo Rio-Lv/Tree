@@ -73,9 +73,9 @@ function Branch(props) {
 
   //close Add
 
-  useEffect(() => {
-    setMe(props.Add);
-  }, [props.Add]);
+  // useEffect(() => {
+  //   setMe(props.Add);
+  // }, [props.Add]);
 
   return (
     <div>
@@ -109,11 +109,7 @@ function Branch(props) {
             spacing={spacing}
             borderRadius={borderRadius}
           />
-          <ColumnRight
-            style={{
-              minWidth: me ? "70px" : "0px",
-            }}
-          >
+          <ColumnRight>
             {/* {props.children} */}
             {branchOut ? branches : null}
             <BuildTools
@@ -192,6 +188,7 @@ const ColumnRight = styled.div`
   position: relative;
   margin-bottom: -5px;
   overflow: hidden;
+  transition: 0.3s;
 `;
 
 const DeleteDocument = styled.div`
