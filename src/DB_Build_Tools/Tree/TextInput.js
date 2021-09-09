@@ -19,7 +19,6 @@ function TextInput(props) {
               e.preventDefault();
               // console.log(e.target.value);
               props.setText(e.target.value);
-              var rando;
             }}
           />
         </CenterBlock>
