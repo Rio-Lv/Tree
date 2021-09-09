@@ -148,7 +148,7 @@ function Branch(props) {
 
 export default Branch;
 const Box = styled.div`
-  position: relative;
+  /* position: relative; */
   margin: ${spacing}px;
   border-radius: ${borderRadius}px;
   transition: 0.3s;
@@ -187,8 +187,10 @@ const This = styled.div`
 const ColumnRight = styled.div`
   position: relative;
   margin-bottom: -5px;
-  overflow: hidden;
+
   transition: 0.3s;
+
+  /* border: 3px solid black; */
 `;
 
 const DeleteDocument = styled.div`

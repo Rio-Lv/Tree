@@ -55,28 +55,17 @@ function BuildTools(props) {
       }}
       style={{
         backgroundColor: `${props.color1}`,
-        width: add ? "240px" : "70px",
+        width: add ? "270px" : "60px",
         height: props.show ? "50px" : "0px",
         opacity: props.show ? "100%" : "0%",
         marginTop: props.show ? "5px" : "0px",
       }}
     >
-      {/* <EditData
-        style={{
-          backgroundColor: `${props.color1}`,
-          borderRadius: `${props.borderRadius}px`,
-        }}
-      >
-        <img
-          src="https://img.icons8.com/material-rounded/24/ffffff/edit--v1.png"
-          alt=""
-        />
-      </EditData> */}
       <AddDocument
         style={{
           backgroundColor: `${props.color2}`,
           borderRadius: `${props.borderRadius}px`,
-          width: add ? `200px` : `30px`,
+          width: add ? `200px` : `25px`,
         }}
       >
         <div>
@@ -84,7 +73,7 @@ function BuildTools(props) {
             <CenterBlock>
               <Input
                 style={{
-                  width: add ? "170px" : "0px",
+                  width: add ? "175px" : "0px",
                   opacity: add ? "100%" : "0%",
                 }}
                 type="text"
@@ -110,8 +99,9 @@ function BuildTools(props) {
           }}
           style={{
             userSelect: "none",
-            fontSize: "30px",
-            transform: add ? `translate(4px)` : `translate(-2px,0)`,
+            fontSize: "37px",
+            fontWeight: "400",
+            transform: add ? `translate(1px)` : `translate(-6.5px,0)`,
           }}
         >
           +
@@ -131,7 +121,7 @@ const Tools = styled.div`
   position: relative;
   overflow: hidden;
   text-align: center;
-  line-height: 30px;
+  line-height: 24px;
   cursor: pointer;
   transition: 0.3s;
 `;
@@ -139,28 +129,15 @@ const Tools = styled.div`
 const AddDocument = styled.div`
   display: flex;
   flex-direction: row;
-  width: 30px;
-  height: 30px;
-  font-weight: 600;
-  font-size: 30px;
+  width: 24px;
+  height: 24px;
+
   line-height: 26px;
   margin-right: 0px;
   box-sizing: border-box;
-  border: 2px solid white;
+  /* border: 1px solid white; */
   transition: 0.3s;
   overflow: hidden;
-`;
-const EditData = styled.div`
-  transition: 0.3s;
-  font-weight: 200;
-  line-height: 30px;
-  width: 30px;
-  height: 30px;
-  font-size: 30px;
-  margin-right: 10px;
-  box-sizing: border-box;
-  border: 2px solid white;
-  user-select: none;
 `;
 
 const InputBox = styled.div`
@@ -175,14 +152,17 @@ const InputBox = styled.div`
 const Input = styled.input`
   width: 180px;
   height: 100%;
-  margin-top: 1px;
-  transform: translate(1px, 0px);
+  margin-top: 0px;
+  transform: translate(0px, 0px);
   /* Align radii */
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   transition: 0.3s;
-  border: 1px solid white;
+  border: 2px solid white;
   box-sizing: border-box;
+  :focus {
+    outline: none;
+  }
 `;
 
 const CenterBlock = styled.div`

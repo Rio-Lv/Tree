@@ -42,6 +42,16 @@ function ColumnCenter(props) {
             <div>cats: cats</div>
           </Info>
         </InfoBox>
+        <EditData
+          style={{
+            borderRadius: `${props.borderRadius}px`,
+          }}
+        >
+          <img
+            src="https://img.icons8.com/material-outlined/24/000000/edit--v4.png"
+            alt=""
+          />
+        </EditData>
       </Column>
     </div>
   );
@@ -50,6 +60,7 @@ function ColumnCenter(props) {
 export default ColumnCenter;
 
 const Column = styled.div`
+  /* border: 3px solid blue; */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -81,4 +92,20 @@ const Info = styled.div`
   margin-top: 10px;
   line-height: 24px;
   cursor: auto;
+`;
+const EditData = styled.div`
+  position: absolute;
+  right: -5px;
+  bottom: 5px;
+  transition: 0.3s;
+  font-weight: 200;
+  line-height: 30px;
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
+  margin-right: 10px;
+  box-sizing: border-box;
+  border: 2px solid white;
+  user-select: none;
+  /* background-color: black; */
 `;
