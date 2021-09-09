@@ -126,21 +126,21 @@ function Branch(props) {
             />
 
             {/* <TextInput /> */}
+            {me ? (
+              <DeleteDocument
+                onClick={() => {
+                  console.log(`Deleting: ${props.path}/${props.id}`);
+                  setDeleting(true);
+                  setTimeout(() => {
+                    deleteDoc(doc(db, `${props.path}`, `${props.id}`));
+                  }, 300);
+                }}
+              >
+                +
+              </DeleteDocument>
+            ) : null}
           </ColumnRight>
         </Row>
-        {me ? (
-          <DeleteDocument
-            onClick={() => {
-              console.log(`Deleting: ${props.path}/${props.id}`);
-              setDeleting(true);
-              setTimeout(() => {
-                deleteDoc(doc(db, `${props.path}`, `${props.id}`));
-              }, 300);
-            }}
-          >
-            +
-          </DeleteDocument>
-        ) : null}
       </Box>
     </div>
   );
@@ -196,7 +196,7 @@ const ColumnRight = styled.div`
 
 const DeleteDocument = styled.div`
   position: absolute;
-  right: 0px;
+  right: -7px;
   bottom: 0px;
   font-weight: 200;
   line-height: 32px;
