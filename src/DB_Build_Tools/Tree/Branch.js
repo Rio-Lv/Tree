@@ -170,6 +170,7 @@ const ColumnLeft = styled.div`
   padding-left: 15px;
   cursor: pointer;
   transition: 0.3s;
+  /* border: 3px solid black; */
 `;
 const CentralBox = styled.div`
   min-width: 60px;

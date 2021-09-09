@@ -55,7 +55,7 @@ function BuildTools(props) {
       }}
       style={{
         backgroundColor: `${props.color1}`,
-        width: add ? "270px" : "60px",
+        minWidth: add ? "200px" : "0px",
         height: props.show ? "50px" : "0px",
         opacity: props.show ? "100%" : "0%",
         marginTop: props.show ? "5px" : "0px",
@@ -118,7 +118,6 @@ const Tools = styled.div`
   display: flex;
   flex-direction: row;
   margin: 4px;
-
   position: relative;
   overflow: hidden;
   text-align: center;
@@ -130,7 +129,6 @@ const Tools = styled.div`
 const AddDocument = styled.div`
   display: flex;
   flex-direction: row;
-  width: 24px;
   height: 24px;
 
   line-height: 26px;
@@ -151,7 +149,6 @@ const InputBox = styled.div`
 `;
 
 const Input = styled.input`
-  width: 180px;
   height: 100%;
   margin-top: 0px;
   transform: translate(0px, 0px);
