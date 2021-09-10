@@ -30,12 +30,12 @@ function Tree(props) {
       querySnapshot.forEach((doc) => {
         list.push(doc.id);
       });
-      console.log(props.name + " collection : ", list);
+      // console.log(props.name + " collection : ", list);
     });
   };
   // collection in this document
   useEffect(() => {
-    collectionToArray("root");
+    // collectionToArray("root");
   }, []);
 
   return (

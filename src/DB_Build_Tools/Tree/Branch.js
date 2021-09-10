@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import BuildTools from "./BuildTools";
 
-import ColumnCenter from "./ColumnCenter";
+import EditTools from "./EditTools";
 
 import {
   collection,
@@ -37,6 +37,7 @@ function Branch(props) {
   const [branches, setBranches] = useState([]);
   const [add, setAdd] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [info, setInfo] = useState({});
 
   useEffect(() => {
     setDirectory(props.directory);
@@ -45,26 +46,31 @@ function Branch(props) {
   // this document
   useEffect(() => {
     onSnapshot(doc(db, props.path, props.id), (doc) => {
-      console.log("Branch => Current data: ", doc.data());
+      if (doc.exists) {
+        // console.log("Branch => Current data: ", doc.data());
+        setInfo(doc.data());
+      }
     });
-  }, []);
+  }, [props.path, props.id]);
 
   useEffect(() => {
     const newPath = `${props.path}/${props.id}/${props.id}`;
     const q = query(collection(db, newPath));
     onSnapshot(q, (collection) => {
-      console.log(newPath);
+      // console.log(newPath);
       // console.log("Branch => Collection size: ", collection.size);
       const list = [];
       collection.forEach((doc) => {
         list.push(
-          <Branch
-            name={doc.id}
-            key={doc.id}
-            id={doc.id}
-            path={newPath}
-            index={props.index + 1}
-          ></Branch>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <Branch
+              name={doc.id}
+              key={doc.id}
+              id={doc.id}
+              path={newPath}
+              index={props.index + 1}
+            ></Branch>
+          </div>
         );
       });
       setBranches(list);
@@ -80,6 +86,7 @@ function Branch(props) {
   return (
     <div>
       <Box
+        id={`${props.path}_${props.id}_branch`}
         style={{
           backgroundColor: `${colors[props.index]}`,
           zIndex: `${props.index}`,
@@ -88,7 +95,7 @@ function Branch(props) {
         <Row>
           <ColumnLeft
             style={{
-              minWidth: me ? "100px" : "50px",
+              minWidth: me ? "0px" : "0px",
             }}
             onClick={() => {
               // console.log(props.name);
@@ -105,12 +112,24 @@ function Branch(props) {
             </CentralBox>
           </ColumnLeft>
           <ColumnCenter
-            show={me}
-            spacing={spacing}
-            borderRadius={borderRadius}
-          />
+            id={props.colId}
+            style={{
+              // minWidth: props.show ? "200px" : "0px",
+              // height: props.show ? `calc(100% - ${props.spacing * 2}px)` : "0px",
+              margin: `${props.spacing}px`,
+              borderRadius: `${props.borderRadius}px`,
+            }}
+          >
+            <EditTools
+              show={me}
+              spacing={spacing}
+              borderRadius={borderRadius}
+              info={info}
+              id={props.id}
+              path={props.path}
+            />
+          </ColumnCenter>
           <ColumnRight>
-            {/* {props.children} */}
             {branchOut ? branches : null}
             <BuildTools
               index={props.index}
@@ -126,20 +145,20 @@ function Branch(props) {
             />
 
             {/* <TextInput /> */}
-            {me ? (
-              <DeleteDocument
-                onClick={() => {
-                  console.log(`Deleting: ${props.path}/${props.id}`);
-                  setDeleting(true);
-                  setTimeout(() => {
-                    deleteDoc(doc(db, `${props.path}`, `${props.id}`));
-                  }, 300);
-                }}
-              >
-                +
-              </DeleteDocument>
-            ) : null}
           </ColumnRight>
+          {me ? (
+            <DeleteDocument
+              onClick={() => {
+                // console.log(`Deleting: ${props.path}/${props.id}`);
+                setDeleting(true);
+                // setTimeout(() => {
+                deleteDoc(doc(db, `${props.path}`, `${props.id}`));
+                // }, 300);
+              }}
+            >
+              +
+            </DeleteDocument>
+          ) : null}
         </Row>
       </Box>
     </div>
@@ -149,6 +168,7 @@ function Branch(props) {
 export default Branch;
 const Box = styled.div`
   /* position: relative; */
+
   margin: ${spacing}px;
   border-radius: ${borderRadius}px;
   transition: 0.3s;
@@ -156,24 +176,26 @@ const Box = styled.div`
 `;
 const Row = styled.div`
   position: relative;
-  height: 100%;
   display: flex;
   flex-direction: row;
   color: white;
+  transition: 0.3s;
+  border: 3px solid black;
 `;
 // left ================================
 const ColumnLeft = styled.div`
-  position: relative;
+  /* position: relative; */
   display: flex;
   flex-direction: column;
   padding: ${spacing}px;
   padding-left: 15px;
+  padding-right: 15px;
   cursor: pointer;
   transition: 0.3s;
-  /* border: 3px solid black; */
+  border: 3px solid black;
 `;
 const CentralBox = styled.div`
-  min-width: 60px;
+  min-width: 0px;
   position: relative;
   text-align: left;
   margin: auto;
@@ -184,15 +206,32 @@ const This = styled.div`
   user-select: none;
 `;
 // center ===============================
-
-// right ================================
-const ColumnRight = styled.div`
+const ColumnCenter = styled.div`
+  border: 3px solid blue;
   position: relative;
-  margin-bottom: -5px;
+  display: flex;
+  flex-direction: column;
 
+  margin-left: 0px;
+  cursor: pointer;
   transition: 0.3s;
 
-  /* border: 3px solid black; */
+  color: black;
+  overflow: hidden;
+`;
+// right ================================
+const ColumnRight = styled.div`
+  border: 3px solid red;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  margin-left: 0px;
+  cursor: pointer;
+  transition: 0.3s;
+
+  color: black;
+  overflow: hidden;
 `;
 
 const DeleteDocument = styled.div`

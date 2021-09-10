@@ -31,9 +31,9 @@ function BuildTools(props) {
     console.log(props.nextPath);
     if (text !== "") {
       const ref = doc(db, props.nextPath, text);
-      setDoc(ref, { info: "cheese info" }, { merge: true });
+      setDoc(ref, { id: text, name: text }, { merge: true });
     }
-    setAdd(false);
+    // setAdd(false);
     setText("");
     document.getElementById(inputId).value = "";
   };
@@ -59,6 +59,7 @@ function BuildTools(props) {
         height: props.show ? "50px" : "0px",
         opacity: props.show ? "100%" : "0%",
         marginTop: props.show ? "5px" : "0px",
+        color: "white",
       }}
     >
       <AddDocument
