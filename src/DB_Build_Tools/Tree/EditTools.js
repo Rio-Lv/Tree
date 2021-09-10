@@ -47,37 +47,50 @@ function EditTools(props) {
   useEffect(() => {
     console.log(props.info);
     const pushItems = () => {
+      console.log("props.info", props.info);
       const array = [];
-      for (const [key, value] of Object.entries(props.info)) {
+      var id;
+      var name;
+      const orderedInfo = Object.keys(props.info)
+        .sort()
+        .reverse()
+        .reduce((obj, key) => {
+          obj[key] = props.info[key];
+          return obj;
+        }, {});
+      for (const [key, value] of Object.entries(orderedInfo)) {
         if (key === "id") {
-          array.splice(0, 0, <div>{editable(key, value)}</div>);
+          id = <div>{editable(key, value)}</div>;
         } else if (key === "name") {
-          array.splice(1, 0, <div>{editable(key, value)}</div>);
+          name = <div>{editable(key, value)}</div>;
         } else {
           array.push(<div>{editable(key, value)}</div>);
         }
         console.log(`${key}: ${value}`);
       }
+      array.sort((a, b) => (a.constructor.name > b.constructor.name ? 1 : -1));
+      console.log(array[0]);
+      array.splice(0, 0, id);
+      array.splice(1, 0, name);
       setList(array);
     };
     pushItems();
   }, [props.info]);
 
   return (
-    <Box>
+    <Box style={{ margin: `${props.spacing}px` }}>
       <InfoBox
         style={{
+          borderRadius: `${props.borderRadius}px`,
           opacity: props.show ? "100%" : "0%",
-          transform: `translate(0,  ${props.spacing}px)`,
+          // transform: `translate(0,  ${props.spacing}px)`,
+          width: props.show ? "300px" : "0px",
+          height: props.show ? "200px" : "0px",
         }}
       >
         <Info>{list}</Info>
       </InfoBox>
-      <EditData
-        style={{
-          borderRadius: `${props.borderRadius}px`,
-        }}
-      >
+      <EditData style={{}}>
         <img
           src="https://img.icons8.com/material-outlined/24/000000/edit--v4.png"
           alt=""
@@ -90,7 +103,6 @@ function EditTools(props) {
 export default EditTools;
 
 const Box = styled.div`
-  background-color: white;
   color: black;
 `;
 
@@ -108,7 +120,7 @@ const InfoBox = styled.div`
   }
 `;
 const Info = styled.div`
-  margin: 20px;
+  margin: 10px;
   margin-top: 10px;
   line-height: 24px;
   cursor: auto;
@@ -127,17 +139,16 @@ const EditData = styled.div`
   box-sizing: border-box;
   border: 2px solid white;
   user-select: none;
-  /* background-color: black; */
 `;
 const Input = styled.input`
-  height: 100%;
+  /* height: 100%; */
   margin-top: 0px;
-  transform: translate(0px, 0px);
+  transform: translate(0px, -1px);
   /* Align radii */
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   transition: 0.3s;
-  border: 2px solid white;
+  border: 0px solid white;
   box-sizing: border-box;
   text-indent: 5px;
   :focus {

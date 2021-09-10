@@ -31,7 +31,19 @@ function BuildTools(props) {
     console.log(props.nextPath);
     if (text !== "") {
       const ref = doc(db, props.nextPath, text);
-      setDoc(ref, { id: text, name: text }, { merge: true });
+      setDoc(
+        ref,
+        {
+          id: text,
+          name: text,
+          test1: "text",
+          test2: "text",
+          test3: "text",
+          test4: "text",
+          test5: "text",
+        },
+        { merge: true }
+      );
     }
     // setAdd(false);
     setText("");
@@ -55,10 +67,11 @@ function BuildTools(props) {
       }}
       style={{
         backgroundColor: `${props.color1}`,
-        minWidth: add ? "200px" : "0px",
-        height: props.show ? "50px" : "0px",
+        minWidth: add ? "160px" : "0px",
+        height: props.show ? "29px" : "0px",
+        // this height is sort of like a margin from the bottom
         opacity: props.show ? "100%" : "0%",
-        marginTop: props.show ? "5px" : "0px",
+        marginTop: props.show ? `0px` : "0px",
         color: "white",
       }}
     >
@@ -66,7 +79,8 @@ function BuildTools(props) {
         style={{
           backgroundColor: `${props.color2}`,
           borderRadius: `${props.borderRadius}px`,
-          width: add ? `200px` : `25px`,
+          width: add ? `160px` : `25px`,
+          marginRight: props.show ? `${props.spacing}px` : "0px",
         }}
       >
         <div>
@@ -74,7 +88,7 @@ function BuildTools(props) {
             <CenterBlock>
               <Input
                 style={{
-                  width: add ? "175px" : "0px",
+                  width: add ? "135px" : "0px",
                   opacity: add ? "100%" : "0%",
                 }}
                 type="text"
@@ -118,7 +132,7 @@ export default BuildTools;
 const Tools = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 4px;
+
   position: relative;
   overflow: hidden;
   text-align: center;

@@ -11,11 +11,14 @@ import {
   onSnapshot,
   doc,
   deleteDoc,
+  orderBy,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const spacing = 4;
 const borderRadius = 7;
+
+const neatMode = true;
 
 const colors = [
   "#264653",
@@ -55,14 +58,24 @@ function Branch(props) {
 
   useEffect(() => {
     const newPath = `${props.path}/${props.id}/${props.id}`;
-    const q = query(collection(db, newPath));
+    const q = query(collection(db, newPath), orderBy("name"));
     onSnapshot(q, (collection) => {
       // console.log(newPath);
       // console.log("Branch => Collection size: ", collection.size);
       const list = [];
+      const standard = { display: "flex", flexDirection: "row" };
+      const neat = {};
+
+      const whichMode = () => {
+        if (neatMode) {
+          return neat;
+        } else {
+          return standard;
+        }
+      };
       collection.forEach((doc) => {
         list.push(
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={whichMode()}>
             <Branch
               name={doc.id}
               key={doc.id}
@@ -94,9 +107,6 @@ function Branch(props) {
       >
         <Row>
           <ColumnLeft
-            style={{
-              minWidth: me ? "0px" : "0px",
-            }}
             onClick={() => {
               // console.log(props.name);
               setAdd(false);
@@ -114,10 +124,9 @@ function Branch(props) {
           <ColumnCenter
             id={props.colId}
             style={{
-              // minWidth: props.show ? "200px" : "0px",
-              // height: props.show ? `calc(100% - ${props.spacing * 2}px)` : "0px",
               margin: `${props.spacing}px`,
               borderRadius: `${props.borderRadius}px`,
+              width: me ? "200px" : "0px",
             }}
           >
             <EditTools
@@ -142,6 +151,7 @@ function Branch(props) {
               color2={colors[props.index + 1]}
               color3={colors[props.index + 2]}
               show={me}
+              spacing={spacing}
             />
 
             {/* <TextInput /> */}
@@ -169,7 +179,8 @@ export default Branch;
 const Box = styled.div`
   /* position: relative; */
 
-  margin: ${spacing}px;
+  margin-bottom: ${spacing}px;
+  margin-right: ${spacing}px;
   border-radius: ${borderRadius}px;
   transition: 0.3s;
   overflow: hidden;
@@ -180,7 +191,7 @@ const Row = styled.div`
   flex-direction: row;
   color: white;
   transition: 0.3s;
-  border: 3px solid black;
+  /* border: 3px solid black; */
 `;
 // left ================================
 const ColumnLeft = styled.div`
@@ -188,17 +199,17 @@ const ColumnLeft = styled.div`
   display: flex;
   flex-direction: column;
   padding: ${spacing}px;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: 5px;
+  padding-right: 5px;
   cursor: pointer;
   transition: 0.3s;
-  border: 3px solid black;
+  /* border: 3px solid black; */
 `;
 const CentralBox = styled.div`
-  min-width: 0px;
   position: relative;
   text-align: left;
   margin: auto;
+  white-space: nowrap;
 `;
 const This = styled.div`
   transition: 0.5s;
@@ -207,25 +218,22 @@ const This = styled.div`
 `;
 // center ===============================
 const ColumnCenter = styled.div`
-  border: 3px solid blue;
+  /* border: 3px solid blue; */
   position: relative;
-  display: flex;
-  flex-direction: column;
-
-  margin-left: 0px;
-  cursor: pointer;
+  background-color: white;
+  border-radius: ${borderRadius}px;
+  margin: ${spacing}px;
   transition: 0.3s;
-
-  color: black;
   overflow: hidden;
 `;
 // right ================================
 const ColumnRight = styled.div`
-  border: 3px solid red;
+  /* border: 3px solid red; */
+
   position: relative;
   display: flex;
   flex-direction: column;
-
+  margin-top: ${spacing}px;
   margin-left: 0px;
   cursor: pointer;
   transition: 0.3s;
@@ -237,7 +245,7 @@ const ColumnRight = styled.div`
 const DeleteDocument = styled.div`
   position: absolute;
   right: -7px;
-  bottom: 0px;
+  bottom: -4px;
   font-weight: 200;
   line-height: 32px;
   font-size: 30px;

@@ -23,16 +23,6 @@ function Tree(props) {
     }, 3000);
   }, [seed]);
 
-  const collectionToArray = (path) => {
-    const q = query(collection(db, path));
-    onSnapshot(q, (querySnapshot) => {
-      const list = [];
-      querySnapshot.forEach((doc) => {
-        list.push(doc.id);
-      });
-      // console.log(props.name + " collection : ", list);
-    });
-  };
   // collection in this document
   useEffect(() => {
     // collectionToArray("root");
