@@ -7,6 +7,7 @@ function BuildTools(props) {
   const [open, setOpen] = useState(false);
   const [add, setAdd] = useState(false);
   const [text, setText] = useState("");
+  const [images, setImages] = useState(null);
 
   // make the ids unique
   const inputId = `${props.path}_${props.id}_input`;
@@ -36,6 +37,7 @@ function BuildTools(props) {
         {
           id: text,
           name: text,
+          images: "",
           test1: "text",
           test2: "text",
           test3: "text",
@@ -79,7 +81,7 @@ function BuildTools(props) {
         style={{
           backgroundColor: `${props.color2}`,
           borderRadius: `${props.borderRadius}px`,
-          width: add ? `160px` : `25px`,
+          width: add ? `160px` : `23px`,
           marginRight: props.show ? `${props.spacing}px` : "0px",
         }}
       >
@@ -88,7 +90,7 @@ function BuildTools(props) {
             <CenterBlock>
               <Input
                 style={{
-                  width: add ? "135px" : "0px",
+                  width: add ? "137px" : "0px",
                   opacity: add ? "100%" : "0%",
                 }}
                 type="text"
@@ -117,7 +119,7 @@ function BuildTools(props) {
             userSelect: "none",
             fontSize: "37px",
             fontWeight: "400",
-            transform: add ? `translate(1px)` : `translate(-6.5px,0)`,
+            transform: add ? `translate(1px,-2px)` : `translate(-7.3px,-1.5px)`,
           }}
         >
           +
