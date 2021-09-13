@@ -63,7 +63,7 @@ function EditTools(props) {
       });
       if (adding) {
         // after the plus is click, send that data or if save or enter
-        if (add_title.value !== null && add_value.value !== null) {
+        if (add_title.value !== "" && add_value.value !== "") {
           pushProperty();
           add_title.value = "";
           add_value.value = "";
@@ -124,7 +124,11 @@ function EditTools(props) {
                     DeleteColor;
                   setData((oldData) => {
                     var newData = oldData;
-                    newData[key] = deleteField();
+                    if (key === "name") {
+                      newData[key] = props.id;
+                    } else {
+                      newData[key] = deleteField();
+                    }
                     return newData;
                   });
                 } else {
@@ -213,13 +217,13 @@ function EditTools(props) {
         <div
           onClick={() => {
             if (adding) {
-              pushProperty().then(() => {
-                // after the plus is click, send that data or if save or enter
-                if (add_title.value !== null && add_value.value !== null) {
+              // after the plus is click, send that data or if save or enter
+              if (add_title.value !== "" && add_value.value !== "") {
+                pushProperty().then(() => {
                   add_title.value = "";
                   add_value.value = "";
-                }
-              });
+                });
+              }
             }
             setAdding(!adding);
           }}
@@ -255,20 +259,22 @@ function EditTools(props) {
         }, {});
       for (const [key, value] of Object.entries(orderedInfo)) {
         if (key === "id") {
-          id = <div>{editableText(key, value)}</div>;
+          id = editableText(key, value);
         } else if (key === "name") {
-          name = <div>{editableText(key, value)}</div>;
+          name = editableText(key, value);
         } else if (key === "images") {
           // change this to another function
-          images = <div>{editableText(key, value)}</div>;
+          images = editableText(key, value);
         } else {
-          array.push(<div>{editableText(key, value)}</div>);
+          array.push(editableText(key, value));
         }
       }
       array.sort((a, b) => (a.constructor.name > b.constructor.name ? 1 : -1));
 
       array.splice(0, 0, id);
-      array.splice(1, 0, name);
+      if (name) {
+        array.splice(1, 0, name);
+      }
       setImages(images);
       setList(array);
     };
