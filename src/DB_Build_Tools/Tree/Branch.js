@@ -36,35 +36,47 @@ const colors = [
 function Branch(props) {
   const [me, setMe] = useState(false);
 
-  const [branchOut, setBranchOut] = useState(true);
   const [branches, setBranches] = useState([]);
-  const [add, setAdd] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [deletingChildren, setDeletingChildren] = useState(false);
+  const [noBranches, setNoBranches] = useState(false);
   const [info, setInfo] = useState({});
 
-  //deleting stuff
   useEffect(() => {
     if (props.deleting) {
+      setDeleting(true);
     }
   }, [props.deleting]);
 
-  // this document
+  // this is setting this document
   useEffect(() => {
-    onSnapshot(doc(db, props.path, props.id), (doc) => {
+    const unsub = onSnapshot(doc(db, props.path, props.id), (doc) => {
       if (doc.exists) {
-        // console.log("Branch => Current data: ", doc.data());
         setInfo(doc.data());
       }
     });
-  }, [props.path, props.id]);
+    if (deleting) {
+      unsub();
+    }
+    if (noBranches && deleting) {
+      const deleteHere = async () => {
+        await deleteDoc(doc(db, props.path, props.id));
+      };
+      deleteHere();
+    }
+  }, [props.path, props.id, noBranches, deleting]);
 
+  // getting data from collection
+  /*
+        What to do if deleting?
+        1. when a branch is deleting , tell all child components to set it self to deleting
+        2. If collection size is 0 unsubscribe, set (self) noBranches to   true    
+        3. If collection size is not 0, delete all documents in the collection
+        4. Delete itself (the document that builds it) and unsub
+  */
   useEffect(() => {
-    const newPath = `${props.path}/${props.id}/${props.id}`;
+    const newPath = `${props.path}/${props.id}/${props.id}`; //path to its collection
     const q = query(collection(db, newPath), orderBy("name"));
-    onSnapshot(q, (collection) => {
-      // console.log(newPath);
-      // console.log("Branch => Collection size: ", collection.size);
+    const unsubscribe = onSnapshot(q, (collection) => {
       const list = [];
       const standard = { display: "flex", flexDirection: "row" };
       const neat = {};
@@ -76,29 +88,47 @@ function Branch(props) {
           return standard;
         }
       };
-      collection.forEach((doc) => {
-        list.push(
-          <div style={whichMode()}>
-            <Branch
-              name={doc.id}
-              key={doc.id}
-              id={doc.id}
-              path={newPath}
-              index={props.index + 1}
-              deleting={deletingChildren}
-            ></Branch>
-          </div>
-        );
-      });
-      setBranches(list);
+
+      // DELETING BRANCHES
+      if (deleting) {
+        unsubscribe();
+        if (collection.size > 0) {
+          // delete existing branches
+          const deleteOne = async (path, id) => {
+            await deleteDoc(doc(db, path, id));
+          };
+          collection.forEach((doc) => {
+            deleteOne(newPath, doc.id);
+          });
+        } else {
+          // Stop listening ---- no branches and under deletion
+          setNoBranches(true);
+        }
+      } else {
+        // CREATING BRANCHES
+        if (collection.size > 0) {
+          collection.forEach((doc) => {
+            list.push(
+              <div style={whichMode()}>
+                <Branch
+                  name={doc.id}
+                  key={doc.id}
+                  id={doc.id}
+                  path={newPath}
+                  index={props.index + 1}
+                  deleting={deleting}
+                ></Branch>
+              </div>
+            );
+          });
+          setBranches(list);
+        } else {
+          //No Branches
+          setNoBranches(true);
+        }
+      }
     });
-  }, [props]);
-
-  //close Add
-
-  // useEffect(() => {
-  //   setMe(props.Add);
-  // }, [props.Add]);
+  }, [props, deleting, noBranches]);
 
   return (
     <Box
@@ -112,7 +142,7 @@ function Branch(props) {
         <ColumnLeft
           onClick={() => {
             // console.log(props.name);
-            setAdd(false);
+
             if (me) {
               setMe(false);
             } else {
@@ -132,14 +162,16 @@ function Branch(props) {
             width: me ? "200px" : "0px",
           }}
         >
-          <EditTools
-            show={me}
-            spacing={spacing}
-            borderRadius={borderRadius}
-            info={info}
-            id={props.id}
-            path={props.path}
-          />
+          {deleting ? null : (
+            <EditTools
+              show={me}
+              spacing={spacing}
+              borderRadius={borderRadius}
+              info={info}
+              id={props.id}
+              path={props.path}
+            />
+          )}
         </ColumnCenter>
         <ColumnRight>
           {branches}
@@ -162,11 +194,7 @@ function Branch(props) {
         {me ? (
           <DeleteDocument
             onClick={() => {
-              // console.log(`Deleting: ${props.path}/${props.id}`);
               setDeleting(true);
-              // setTimeout(() => {
-              deleteDoc(doc(db, `${props.path}`, `${props.id}`));
-              // }, 300);
             }}
           >
             +

@@ -245,40 +245,45 @@ function EditTools(props) {
 
   // this sorts the data, id and name on top, images bottom, rest alphabetical
   useEffect(() => {
-    const pushItems = () => {
-      const array = [];
-      var id;
-      var name;
-      var images;
-      const orderedInfo = Object.keys(props.info)
-        .sort()
-        .reverse()
-        .reduce((obj, key) => {
-          obj[key] = props.info[key];
-          return obj;
-        }, {});
-      for (const [key, value] of Object.entries(orderedInfo)) {
-        if (key === "id") {
-          id = editableText(key, value);
-        } else if (key === "name") {
-          name = editableText(key, value);
-        } else if (key === "images") {
-          // change this to another function
-          images = editableText(key, value);
-        } else {
-          array.push(editableText(key, value));
+    if (props.info) {
+      const pushItems = () => {
+        const array = [];
+        var id;
+        var name;
+        var images;
+        const orderedInfo = Object.keys(props.info)
+          .sort()
+          .reverse()
+          .reduce((obj, key) => {
+            obj[key] = props.info[key];
+            return obj;
+          }, {});
+        for (const [key, value] of Object.entries(orderedInfo)) {
+          if (key === "id") {
+            id = editableText(key, value);
+          } else if (key === "name") {
+            name = editableText(key, value);
+          } else if (key === "images") {
+            // change this to another function
+            images = editableText(key, value);
+          } else {
+            array.push(editableText(key, value));
+          }
         }
-      }
-      array.sort((a, b) => (a.constructor.name > b.constructor.name ? 1 : -1));
+        array.sort((a, b) =>
+          a.constructor.name > b.constructor.name ? 1 : -1
+        );
 
-      array.splice(0, 0, id);
-      if (name) {
-        array.splice(1, 0, name);
-      }
-      setImages(images);
-      setList(array);
-    };
-    pushItems();
+        array.splice(0, 0, id);
+        if (name) {
+          array.splice(1, 0, name);
+        }
+        setImages(images);
+        setList(array);
+      };
+
+      pushItems();
+    }
   }, [props.info]);
 
   return (
