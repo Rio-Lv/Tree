@@ -20,7 +20,7 @@ function BuildTools(props) {
       // Number 13 is the "Enter" key on the keyboard
       if (event.key === "Enter") {
         // Cancel the default action, if needed
-        console.log(buttonId);
+        // console.log(buttonId);
         event.preventDefault();
         // Trigger the button element with a click
         document.getElementById(buttonId).click();
@@ -29,7 +29,7 @@ function BuildTools(props) {
   }, [buttonId, inputId]);
 
   const createDoc = () => {
-    console.log(props.nextPath);
+    // console.log(props.nextPath);
     if (text !== "") {
       const ref = doc(db, props.nextPath, text);
       setDoc(

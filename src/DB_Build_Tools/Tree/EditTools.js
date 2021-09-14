@@ -12,6 +12,7 @@ function EditTools(props) {
   const [images, setImages] = useState();
   const [adding, setAdding] = useState(false);
   const [data, setData] = useState(props.info); // just the data
+
   const unique_class_input = `${props.path}_${props.id}_input_class`;
   const unique_class_name = `${props.path}_${props.id}_input_name`;
 
@@ -41,6 +42,7 @@ function EditTools(props) {
     if (props.show === false) {
       pushData();
     }
+    return null;
   }, [props.show]);
 
   const handleKeyDown = (event) => {
@@ -91,7 +93,7 @@ function EditTools(props) {
               readOnly
               onChange={(e) => {
                 e.preventDefault();
-                console.log(e.target.value);
+                // console.log(e.target.value);
               }}
             ></Input>
           </div>
@@ -177,7 +179,7 @@ function EditTools(props) {
             onChange={(e) => {
               if (!add_value.value) {
                 add_title.style.color = DeleteColor;
-                console.log("arga barg barg");
+                // console.log("arga barg barg");
               } else {
                 add_title.style.color = "black";
               }
@@ -206,7 +208,7 @@ function EditTools(props) {
             onChange={(e) => {
               if (!add_value.value) {
                 add_title.style.color = DeleteColor;
-                console.log("arga barg barg");
+                // console.log("arga barg barg");
               } else {
                 add_title.style.color = "black";
               }
@@ -284,6 +286,7 @@ function EditTools(props) {
 
       pushItems();
     }
+    return null;
   }, [props.info]);
 
   return (

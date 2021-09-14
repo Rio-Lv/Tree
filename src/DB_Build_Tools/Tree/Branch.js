@@ -12,6 +12,7 @@ import {
   doc,
   deleteDoc,
   orderBy,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
@@ -38,32 +39,30 @@ function Branch(props) {
 
   const [branches, setBranches] = useState([]);
   const [deleting, setDeleting] = useState(false);
-  const [noBranches, setNoBranches] = useState(false);
+
   const [info, setInfo] = useState({});
+
+  //deleting this document function
+  const deleteBranch = async () => {
+    const deleteHere = async () => {
+      await deleteDoc(doc(db, props.path, props.id));
+    };
+    setTimeout(() => {
+      deleteHere();
+    }, 1000);
+  };
 
   useEffect(() => {
     if (props.deleting) {
       setDeleting(true);
     }
+    return null;
   }, [props.deleting]);
 
   // this is setting this document
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, props.path, props.id), (doc) => {
-      if (doc.exists) {
-        setInfo(doc.data());
-      }
-    });
-    if (deleting) {
-      unsub();
-    }
-    if (noBranches && deleting) {
-      const deleteHere = async () => {
-        await deleteDoc(doc(db, props.path, props.id));
-      };
-      deleteHere();
-    }
-  }, [props.path, props.id, noBranches, deleting]);
+    return null;
+  }, [props.path, props.id, branches, deleting]);
 
   // getting data from collection
   /*
@@ -74,6 +73,14 @@ function Branch(props) {
         4. Delete itself (the document that builds it) and unsub
   */
   useEffect(() => {
+    //Doc
+    const unsub = onSnapshot(doc(db, props.path, props.id), (doc) => {
+      if (doc.exists) {
+        setInfo(doc.data());
+      }
+    });
+
+    // collection in Doc
     const newPath = `${props.path}/${props.id}/${props.id}`; //path to its collection
     const q = query(collection(db, newPath), orderBy("name"));
     const unsubscribe = onSnapshot(q, (collection) => {
@@ -88,120 +95,111 @@ function Branch(props) {
           return standard;
         }
       };
-
-      // DELETING BRANCHES
-      if (deleting) {
-        unsubscribe();
-        if (collection.size > 0) {
-          // delete existing branches
-          const deleteOne = async (path, id) => {
-            await deleteDoc(doc(db, path, id));
-          };
-          collection.forEach((doc) => {
-            deleteOne(newPath, doc.id);
-          });
-        } else {
-          // Stop listening ---- no branches and under deletion
-          setNoBranches(true);
-        }
+      // CREATING BRANCHES
+      if (collection.size > 0) {
+        collection.forEach((doc) => {
+          list.push(
+            <div style={whichMode()}>
+              <Branch
+                id={doc.id}
+                name={doc.id}
+                key={doc.id}
+                path={newPath}
+                index={props.index + 1}
+                deleting={deleting}
+              ></Branch>
+            </div>
+          );
+        });
+        setBranches(list);
       } else {
-        // CREATING BRANCHES
-        if (collection.size > 0) {
-          collection.forEach((doc) => {
-            list.push(
-              <div style={whichMode()}>
-                <Branch
-                  name={doc.id}
-                  key={doc.id}
-                  id={doc.id}
-                  path={newPath}
-                  index={props.index + 1}
-                  deleting={deleting}
-                ></Branch>
-              </div>
-            );
-          });
-          setBranches(list);
-        } else {
-          //No Branches
-          setNoBranches(true);
+        if (deleting) {
+          console.log("waiting to delete", props.id);
+          deleteBranch();
+          unsub();
         }
       }
     });
-  }, [props, deleting, noBranches]);
+    return null;
+  }, [props, deleting]);
 
   return (
-    <Box
-      id={`${props.path}_${props.id}_branch`}
-      style={{
-        backgroundColor: `${colors[props.index]}`,
-        zIndex: `${props.index}`,
-      }}
-    >
-      <Row>
-        <ColumnLeft
-          onClick={() => {
-            // console.log(props.name);
-
-            if (me) {
-              setMe(false);
-            } else {
-              setMe(true);
-            }
-          }}
-        >
-          <CentralBox>
-            <This>{props.name}</This>
-          </CentralBox>
-        </ColumnLeft>
-        <ColumnCenter
-          id={props.colId}
-          style={{
-            margin: `${props.spacing}px`,
-            borderRadius: `${props.borderRadius}px`,
-            width: me ? "200px" : "0px",
-          }}
-        >
-          {deleting ? null : (
-            <EditTools
-              show={me}
-              spacing={spacing}
-              borderRadius={borderRadius}
-              info={info}
-              id={props.id}
-              path={props.path}
-            />
-          )}
-        </ColumnCenter>
-        <ColumnRight>
-          {branches}
-          <BuildTools
-            index={props.index}
-            name={props.name}
-            borderRadius={borderRadius}
-            nextPath={`${props.path}/${props.id}/${props.id}`}
-            id={props.id}
-            path={props.path}
-            color1={colors[props.index + 0]}
-            color2={colors[props.index + 1]}
-            color3={colors[props.index + 2]}
-            show={me}
-            spacing={spacing}
-          />
-
-          {/* <TextInput /> */}
-        </ColumnRight>
-        {me ? (
-          <DeleteDocument
+    <div>
+      <Box
+        id={`${props.path}_${props.id}_branch`}
+        style={{
+          backgroundColor: `${colors[props.index]}`,
+          zIndex: `${props.index}`,
+        }}
+      >
+        <Row>
+          <ColumnLeft
             onClick={() => {
-              setDeleting(true);
+              // console.log(props.name);
+
+              if (me) {
+                setMe(false);
+              } else {
+                setMe(true);
+              }
             }}
           >
-            +
-          </DeleteDocument>
-        ) : null}
-      </Row>
-    </Box>
+            <CentralBox>
+              <This>{props.name}</This>
+            </CentralBox>
+          </ColumnLeft>
+          <ColumnCenter
+            id={props.colId}
+            style={{
+              margin: `${props.spacing}px`,
+              borderRadius: `${props.borderRadius}px`,
+              width: me ? "200px" : "0px",
+            }}
+          >
+            {deleting ? null : (
+              <EditTools
+                deleting={deleting}
+                show={me}
+                spacing={spacing}
+                borderRadius={borderRadius}
+                info={info}
+                id={props.id}
+                path={props.path}
+              />
+            )}
+          </ColumnCenter>
+          <ColumnRight>
+            {branches.length !== 0 ? <div>{branches}</div> : null}
+            {deleting ? null : (
+              <BuildTools
+                index={props.index}
+                name={props.name}
+                borderRadius={borderRadius}
+                nextPath={`${props.path}/${props.id}/${props.id}`}
+                id={props.id}
+                path={props.path}
+                color1={colors[props.index + 0]}
+                color2={colors[props.index + 1]}
+                color3={colors[props.index + 2]}
+                show={me}
+                spacing={spacing}
+              />
+            )}
+
+            {/* <TextInput /> */}
+          </ColumnRight>
+          {me ? (
+            <DeleteDocument
+              onClick={() => {
+                setDeleting(true);
+              }}
+            >
+              +
+            </DeleteDocument>
+          ) : null}
+        </Row>
+      </Box>
+    </div>
   );
 }
 
