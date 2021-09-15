@@ -105,6 +105,7 @@ function BuildTools(props) {
           onClick={() => {
             if (!add) {
               setAdd(true);
+              props.setCollectionEmpty(false);
               document.getElementById(inputId).focus();
             } else {
               createDoc();

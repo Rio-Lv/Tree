@@ -11,6 +11,7 @@ function EditTools(props) {
   const [list, setList] = useState([]); // with in div and styled
   const [images, setImages] = useState();
   const [adding, setAdding] = useState(false);
+  const [prevshow, setPrevshow] = useState(false);
   const [data, setData] = useState(props.info); // just the data
 
   const unique_class_input = `${props.path}_${props.id}_input_class`;
@@ -26,6 +27,16 @@ function EditTools(props) {
     const ref = doc(db, props.path, props.id);
     await updateDoc(ref, data);
   };
+  useEffect(() => {
+    if (!props.deleting) {
+      if (props.show === false && prevshow === true) {
+        console.log("running push data", props.id);
+        pushData();
+      }
+    }
+    setPrevshow(props.show);
+    return null;
+  }, [props.show]);
   const pushProperty = async () => {
     if (adding) {
       if (add_title.value !== null && add_value.value !== null) {
@@ -37,13 +48,6 @@ function EditTools(props) {
       }
     }
   };
-
-  useEffect(() => {
-    if (props.show === false) {
-      pushData();
-    }
-    return null;
-  }, [props.show]);
 
   const handleKeyDown = (event) => {
     let charCode = String.fromCharCode(event.which).toLowerCase();

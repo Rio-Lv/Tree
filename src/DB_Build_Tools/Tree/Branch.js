@@ -38,90 +38,91 @@ function Branch(props) {
   const [me, setMe] = useState(false);
 
   const [branches, setBranches] = useState([]);
+  const [collectionEmpty, setCollectionEmpty] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const [info, setInfo] = useState({});
 
-  //deleting this document function
-  const deleteBranch = async () => {
-    const deleteHere = async () => {
-      await deleteDoc(doc(db, props.path, props.id));
-    };
-    setTimeout(() => {
-      deleteHere();
-    }, 1000);
-  };
-
+  //Check if parent is being deleted
   useEffect(() => {
     if (props.deleting) {
-      setDeleting(true);
+      setDeleting(props.deleting);
+      setMe(true); //leave this, or many console log errors trust me
     }
     return null;
   }, [props.deleting]);
 
-  // this is setting this document
   useEffect(() => {
-    return null;
-  }, [props.path, props.id, branches, deleting]);
-
-  // getting data from collection
-  /*
-        What to do if deleting?
-        1. when a branch is deleting , tell all child components to set it self to deleting
-        2. If collection size is 0 unsubscribe, set (self) noBranches to   true    
-        3. If collection size is not 0, delete all documents in the collection
-        4. Delete itself (the document that builds it) and unsub
-  */
-  useEffect(() => {
-    //Doc
     const unsub = onSnapshot(doc(db, props.path, props.id), (doc) => {
+      // console.log("unsub forming now");
       if (doc.exists) {
         setInfo(doc.data());
       }
-    });
-
-    // collection in Doc
-    const newPath = `${props.path}/${props.id}/${props.id}`; //path to its collection
-    const q = query(collection(db, newPath), orderBy("name"));
-    const unsubscribe = onSnapshot(q, (collection) => {
-      const list = [];
-      const standard = { display: "flex", flexDirection: "row" };
-      const neat = {};
-
-      const whichMode = () => {
-        if (neatMode) {
-          return neat;
-        } else {
-          return standard;
-        }
-      };
-      // CREATING BRANCHES
-      if (collection.size > 0) {
-        collection.forEach((doc) => {
-          list.push(
-            <div style={whichMode()}>
-              <Branch
-                id={doc.id}
-                name={doc.id}
-                key={doc.id}
-                path={newPath}
-                index={props.index + 1}
-                deleting={deleting}
-              ></Branch>
-            </div>
-          );
-        });
-        setBranches(list);
-      } else {
-        if (deleting) {
-          console.log("waiting to delete", props.id);
-          deleteBranch();
-          unsub();
-        }
+      if (deleting) {
+        unsub();
       }
     });
+  }, []);
+
+  // getting data from collection
+  useEffect(() => {
+    const newPath = `${props.path}/${props.id}/${props.id}`; //path to its collection
+    const q = query(collection(db, newPath), orderBy("name"));
+    const unsubscribe = onSnapshot(
+      q,
+      (collection) => {
+        const list = [];
+        const standard = { display: "flex", flexDirection: "row" };
+        const neat = {};
+
+        const whichMode = () => {
+          if (neatMode) {
+            return neat;
+          } else {
+            return standard;
+          }
+        };
+        // CREATING BRANCHES
+        if (collection.size > 0) {
+          collection.forEach((doc) => {
+            list.push(
+              <div style={whichMode()}>
+                <Branch
+                  id={doc.id}
+                  name={doc.id}
+                  key={doc.id}
+                  path={newPath}
+                  index={props.index + 1}
+                  deleting={deleting}
+                ></Branch>
+              </div>
+            );
+          });
+          setCollectionEmpty(false);
+          setBranches(list);
+        } else {
+          // if collection is empty
+          setCollectionEmpty(true);
+        }
+      },
+      (error) => {
+        return null;
+      }
+    );
+
+    if (collectionEmpty) {
+      unsubscribe();
+    }
+    if (deleting && collectionEmpty) {
+      const deleteBranch = async () => {
+        await deleteDoc(doc(db, props.path, props.id));
+      };
+      console.log("waiting to delete", props.id);
+
+      deleteBranch(); // Deletes this branch if child branches are gone
+    }
     return null;
-  }, [props, deleting]);
+  }, [props.path, props.id, props.index, deleting, collectionEmpty]);
 
   return (
     <div>
@@ -137,7 +138,7 @@ function Branch(props) {
             onClick={() => {
               // console.log(props.name);
 
-              if (me) {
+              if (me && deleting === false) {
                 setMe(false);
               } else {
                 setMe(true);
@@ -148,6 +149,7 @@ function Branch(props) {
               <This>{props.name}</This>
             </CentralBox>
           </ColumnLeft>
+
           <ColumnCenter
             id={props.colId}
             style={{
@@ -156,24 +158,24 @@ function Branch(props) {
               width: me ? "200px" : "0px",
             }}
           >
-            {deleting ? null : (
-              <EditTools
-                deleting={deleting}
-                show={me}
-                spacing={spacing}
-                borderRadius={borderRadius}
-                info={info}
-                id={props.id}
-                path={props.path}
-              />
-            )}
+            <EditTools
+              show={me}
+              spacing={spacing}
+              borderRadius={borderRadius}
+              info={info}
+              id={props.id}
+              path={props.path}
+              deleting={deleting}
+            />
           </ColumnCenter>
+
           <ColumnRight>
             {branches.length !== 0 ? <div>{branches}</div> : null}
             {deleting ? null : (
               <BuildTools
                 index={props.index}
                 name={props.name}
+                setCollectionEmpty={setCollectionEmpty}
                 borderRadius={borderRadius}
                 nextPath={`${props.path}/${props.id}/${props.id}`}
                 id={props.id}
@@ -290,3 +292,13 @@ const DeleteDocument = styled.div`
 `;
 
 //======= build tools
+
+//notes
+
+/*
+      What to do if deleting?
+      1. when a branch is deleting , tell all child components to set it self to deleting
+      2. If collection size is 0 unsubscribe, set (self) noBranches to   true    
+      3. If collection size is not 0, delete all documents in the collection
+      4. Delete itself (the document that builds it) and unsub
+    */
