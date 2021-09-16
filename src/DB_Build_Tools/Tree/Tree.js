@@ -2,7 +2,14 @@ import React, { useState, useEffect } from "react";
 import Branch from "./Branch";
 import { db } from "../../firebase";
 
-import { collection, query, onSnapshot, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  query,
+  onSnapshot,
+  doc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 
 import styled from "styled-components";
 function Tree(props) {
@@ -11,7 +18,38 @@ function Tree(props) {
   const [name, setName] = useState(props.name);
   const [tree, setTree] = useState([]);
   const [seed, setSeed] = useState([]);
-  const [id, setId] = useState();
+
+  const [userCollectionPath, setUserCollectionPath] = useState(
+    `trees/users/${props.uid}/${props.uid}`
+  );
+
+  useEffect(() => {
+    setUserCollectionPath(`trees/users/${props.uid}/${props.uid}`);
+  }, [props.uid]);
+
+  useEffect(() => {
+    const defaultRoot = {
+      id: "root",
+      instructions: "welcome to your tree!",
+      expand:
+        "clicking on the branch name expands it and gives you extra tools",
+      addBranch:
+        "try press that + button on the top right of the branch to add sub branches",
+    };
+    const checkRoot = async () => {
+      const docRef = doc(db, userCollectionPath + "/root", "root");
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+        setDoc(docRef, defaultRoot);
+      }
+    };
+    checkRoot();
+  }, [userCollectionPath]);
 
   useEffect(() => {
     setName(props.name);
@@ -30,7 +68,12 @@ function Tree(props) {
 
   return (
     <Trunk>
-      <Branch name={"Projects"} id={"project"} path={"root"} index={0}></Branch>
+      <Branch
+        name={"root"}
+        id={"root"}
+        path={`${userCollectionPath}/root`}
+        index={0}
+      ></Branch>
     </Trunk>
   );
 }

@@ -59,9 +59,7 @@ function App() {
       {user ? <div>{user.uid}</div> : null}
       {/* <ProjectBuilder /> */}
       <DisplayArea>
-        <Center>
-          <Tree name={"A"} />
-        </Center>
+        <Center>{user ? <Tree uid={user.uid} /> : null}</Center>
       </DisplayArea>
     </div>
   );

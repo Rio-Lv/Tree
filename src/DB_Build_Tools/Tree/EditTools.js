@@ -88,7 +88,6 @@ function EditTools(props) {
           <div style={{ display: "flex", flexDirection: "row" }}>
             <div id={uniqueKeyName}>{key}:</div>
             <Input
-              // style={{ color: "#b90606" }}
               id={uniqueKeyInput}
               key={uniqueKeyInput}
               type="text"
@@ -104,7 +103,7 @@ function EditTools(props) {
         );
       } else {
         return (
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <div
               className={unique_class_name}
               style={{ transition: ".3s", whiteSpace: "nowrap" }}
@@ -113,6 +112,7 @@ function EditTools(props) {
               {key}:
             </div>
             <Input
+              style={{ wordWrap: "break-word" }}
               id={uniqueKeyInput}
               className={unique_class_input}
               key={uniqueKeyInput}
