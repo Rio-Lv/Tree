@@ -54,13 +54,15 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={() => GoogleSignIn()}>SignIn</button>
-      <button onClick={() => GoogleSignOut()}>SignOut</button>
-      {user ? <div>{user.uid}</div> : null}
       {/* <ProjectBuilder /> */}
       <DisplayArea>
         <Center>{user ? <Tree uid={user.uid} /> : null}</Center>
       </DisplayArea>
+      <div style={{ position: "fixed" }}>
+        {user ? <div style={{ color: "white" }}>{user.uid}</div> : null}
+        <button onClick={() => GoogleSignIn()}>SignIn</button>
+        <button onClick={() => GoogleSignOut()}>SignOut</button>
+      </div>
     </div>
   );
 }
@@ -69,7 +71,7 @@ export default App;
 
 const Center = styled.div`
   margin-top: 50px;
-  height: 100%;
+  height: 70%;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -81,4 +83,5 @@ const DisplayArea = styled.div`
   height: 100%;
   width: 100%;
   overflow: scroll;
+  background-color: black;
 `;

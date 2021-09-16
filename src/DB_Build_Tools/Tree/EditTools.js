@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { doc, updateDoc, deleteField } from "firebase/firestore";
 import { db } from "../../firebase";
-import FadeIn from "react-fade-in/lib/FadeIn";
+import ImageManager from "./ImageManager";
 
 const EditColor = "#0e76ec";
 const DeleteColor = "#f13737";
@@ -86,10 +86,16 @@ function EditTools(props) {
       if (key === "id") {
         return (
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <div style={{ fontSize: "14px" }} id={uniqueKeyName}>
+            <div style={{ fontSize: "15px" }} id={uniqueKeyName}>
               {key} :
             </div>
             <Input
+              style={{
+                fontSize: value.length > 15 ? "12px" : "15px",
+                height: value.length > 15 ? "300px" : "24px",
+                marginBottom: "px",
+                backgroundColor: "white",
+              }}
               id={uniqueKeyInput}
               key={uniqueKeyInput}
               type="text"
@@ -108,8 +114,9 @@ function EditTools(props) {
           <div
             style={{
               display: "flex",
+
               flexDirection: value.length > 15 ? "column" : "row",
-              marginBottom: value.length > 15 ? "5px" : ".5px",
+              marginBottom: value.length > 15 ? "3px" : "-3px",
             }}
           >
             <div
@@ -117,21 +124,31 @@ function EditTools(props) {
               style={{
                 transition: ".3s",
                 whiteSpace: "nowrap",
-                fontSize: "14px",
+                fontSize: "15px",
               }}
               id={uniqueKeyName}
             >
-              {key} :
+              {key} : &#160;
             </div>
             <Input
               style={{
                 whiteSpace: "normal",
-                wordWrap: "break-word",
-                backgroundColor: value.length > 15 ? "#f2f2f2" : "white",
-
-                height: value.length > 15 ? "50px" : "25px",
+                // wordWrap: "break-word",
+                backgroundColor: value.length > 15 ? "#f2f2f2" : "#f2f2f2",
+                // how much space is needed for the text
+                height:
+                  value.length > 15
+                    ? value.length > 25
+                      ? value.length > 45
+                        ? value.length > 75
+                          ? "100px"
+                          : "70px"
+                        : "50px"
+                      : "30px"
+                    : "25px",
                 width: value.length > 15 ? "170px" : "100px",
-                fontSize: value.length > 15 ? "12px" : "14px",
+                fontSize: value.length > 15 ? "12px" : "15px",
+                resize: value.length > 15 ? "vertical" : "none",
               }}
               id={uniqueKeyInput}
               className={unique_class_input}
@@ -185,6 +202,7 @@ function EditTools(props) {
             flexDirection: "row",
             opacity: adding ? "100%" : "0%",
             transition: ".3s",
+            fontSize: "15px",
           }}
         >
           <AddInput
@@ -196,6 +214,7 @@ function EditTools(props) {
               backgroundColor: "#F2F2F2",
               textIndent: "5px",
               borderRadius: `${props.borderRadius}px`,
+              fontSize: "15px",
             }}
             id={uniqueKeyAddPropertyName}
             placeholder={"Title"}
@@ -212,6 +231,7 @@ function EditTools(props) {
           <div
             style={{
               width: adding ? "4px" : "0px",
+              fontSize: "14px",
             }}
           >
             :
@@ -225,6 +245,7 @@ function EditTools(props) {
               color: EditColor,
               textIndent: "5px",
               borderRadius: `${props.borderRadius}px`,
+              fontSize: "14px",
             }}
             id={uniqueKeyAddPropertyValue}
             placeholder={"Value"}
@@ -291,7 +312,7 @@ function EditTools(props) {
             name = editableText(key, value);
           } else if (key === "images") {
             // change this to another function
-            images = editableText(key, value);
+            images = <ImageManager borderRadius={props.borderRadius} />;
           } else {
             array.push(editableText(key, value));
           }
@@ -335,6 +356,7 @@ function EditTools(props) {
               {addProperty()}
               {images}
             </Info>
+            <div style={{ height: "50px" }} />
           </div>
         ) : null}
       </InfoBox>
@@ -364,23 +386,29 @@ const InfoBox = styled.div`
 `;
 const Info = styled.div`
   margin: 10px;
-  margin-top: 10px;
+  /* margin-top: 10px; */
   line-height: 24px;
   cursor: auto;
 `;
 
-const Input = styled.input`
+const Input = styled.textarea`
   /* height: 100%; */
   /* margin-top: 0px; */
   /* transform: translate(0px, -0px); */
   /* Align radii */
   margin-bottom: 0.5px;
-  border-bottom-left-radius: 5px;
-  border-top-left-radius: 5px;
+  border-radius: 5px;
+
   transition: 0.3s;
   border: 0px solid white;
   box-sizing: border-box;
   text-indent: 5px;
+  overflow-y: scroll;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
   :focus {
     outline: none;
   }

@@ -30,11 +30,12 @@ function Tree(props) {
   useEffect(() => {
     const defaultRoot = {
       id: "root",
-      instructions: "welcome to your tree!",
+      _instructions: "welcome to your tree!",
       expand:
         "clicking on the branch name expands it and gives you extra tools",
       addBranch:
         "try press that + button on the top right of the branch to add sub branches",
+      images: "store your images here",
     };
     const checkRoot = async () => {
       const docRef = doc(db, userCollectionPath + "/root", "root");
@@ -42,6 +43,7 @@ function Tree(props) {
 
       if (docSnap.exists()) {
         console.log("Document data:", docSnap.data());
+        setDoc(docRef, defaultRoot, { merge: true });
       } else {
         // doc.data() will be undefined in this case
         console.log("No such document!");
