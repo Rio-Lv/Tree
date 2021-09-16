@@ -86,7 +86,9 @@ function EditTools(props) {
       if (key === "id") {
         return (
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <div id={uniqueKeyName}>{key}:</div>
+            <div style={{ fontSize: "14px" }} id={uniqueKeyName}>
+              {key} :
+            </div>
             <Input
               id={uniqueKeyInput}
               key={uniqueKeyInput}
@@ -103,16 +105,34 @@ function EditTools(props) {
         );
       } else {
         return (
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: value.length > 15 ? "column" : "row",
+              marginBottom: value.length > 15 ? "5px" : ".5px",
+            }}
+          >
             <div
               className={unique_class_name}
-              style={{ transition: ".3s", whiteSpace: "nowrap" }}
+              style={{
+                transition: ".3s",
+                whiteSpace: "nowrap",
+                fontSize: "14px",
+              }}
               id={uniqueKeyName}
             >
-              {key}:
+              {key} :
             </div>
             <Input
-              style={{ wordWrap: "break-word" }}
+              style={{
+                whiteSpace: "normal",
+                wordWrap: "break-word",
+                backgroundColor: value.length > 15 ? "#f2f2f2" : "white",
+
+                height: value.length > 15 ? "50px" : "25px",
+                width: value.length > 15 ? "170px" : "100px",
+                fontSize: value.length > 15 ? "12px" : "14px",
+              }}
               id={uniqueKeyInput}
               className={unique_class_input}
               key={uniqueKeyInput}
@@ -301,7 +321,7 @@ function EditTools(props) {
           opacity: props.show ? "100%" : "0%",
           // transform: `translate(0,  ${props.spacing}px)`,
           width: props.show ? "300px" : "0px",
-          height: props.show ? "200px" : "0px",
+          height: props.show ? "100px" : "0px",
         }}
       >
         {props.show ? (
@@ -325,21 +345,22 @@ function EditTools(props) {
 export default EditTools;
 
 const Box = styled.div`
+  position: relative;
   color: black;
+  /* border: 3px solid black; */
+  height: 100%;
+  overflow: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const InfoBox = styled.div`
   position: relative;
 
   box-sizing: border-box;
-  /* border: 3px solid blue; */
 
-  overflow: scroll;
   transition: 0.3s;
-
-  ::-webkit-scrollbar {
-    display: none;
-  }
 `;
 const Info = styled.div`
   margin: 10px;
