@@ -84,4 +84,5 @@ const DisplayArea = styled.div`
   width: 100%;
   overflow: scroll;
   background-color: black;
+  /* background-image: url("https://wallpaperaccess.com/full/2797527.jpg"); */
 `;

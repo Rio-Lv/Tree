@@ -27,6 +27,7 @@ function EditTools(props) {
     const ref = doc(db, props.path, props.id);
     await updateDoc(ref, data);
   };
+
   useEffect(() => {
     if (!props.deleting) {
       if (props.show === false && prevshow === true) {
@@ -81,19 +82,19 @@ function EditTools(props) {
   const editableText = (key, value) => {
     if (typeof value === "string" || typeof value === "number") {
       const uniqueKeyInput = `${props.path}_${props.id}_${key}_input`;
-
       const uniqueKeyName = `${props.path}_${props.id}_${key}_name`;
+
       if (key === "id") {
         return (
           <div style={{ display: "flex", flexDirection: "row" }}>
             <div style={{ fontSize: "15px" }} id={uniqueKeyName}>
-              {key} :
+              {key} : &#160;
             </div>
             <Input
               style={{
                 fontSize: value.length > 15 ? "12px" : "15px",
                 height: value.length > 15 ? "300px" : "24px",
-                marginBottom: "px",
+                marginBottom: "3px",
                 backgroundColor: "white",
               }}
               id={uniqueKeyInput}
@@ -116,7 +117,7 @@ function EditTools(props) {
               display: "flex",
 
               flexDirection: value.length > 15 ? "column" : "row",
-              marginBottom: value.length > 15 ? "3px" : "-3px",
+              marginBottom: value.length > 15 ? "3px" : "3px",
             }}
           >
             <div
@@ -125,6 +126,7 @@ function EditTools(props) {
                 transition: ".3s",
                 whiteSpace: "nowrap",
                 fontSize: "15px",
+                cursor: "default",
               }}
               id={uniqueKeyName}
             >
@@ -142,11 +144,11 @@ function EditTools(props) {
                       ? value.length > 45
                         ? value.length > 75
                           ? "100px"
-                          : "70px"
+                          : "60px"
                         : "50px"
                       : "30px"
                     : "25px",
-                width: value.length > 15 ? "170px" : "100px",
+                width: value.length > 15 ? "170px" : "130px",
                 fontSize: value.length > 15 ? "12px" : "15px",
                 resize: value.length > 15 ? "vertical" : "none",
               }}
@@ -206,6 +208,7 @@ function EditTools(props) {
           }}
         >
           <AddInput
+            maxLength={"15"}
             style={{
               width: adding ? "60px" : "0",
               marginRight: adding ? "5px" : "-2px",
@@ -402,8 +405,8 @@ const Input = styled.textarea`
   transition: 0.3s;
   border: 0px solid white;
   box-sizing: border-box;
-  text-indent: 5px;
-  overflow-y: scroll;
+  text-indent: 0px;
+  overflow-y: hidden;
 
   ::-webkit-scrollbar {
     display: none;
@@ -415,7 +418,6 @@ const Input = styled.textarea`
 `;
 const AddInput = styled.input`
   transition: 0.3s;
-
   :focus {
     outline: none;
   }

@@ -43,7 +43,7 @@ function Tree(props) {
 
       if (docSnap.exists()) {
         console.log("Document data:", docSnap.data());
-        setDoc(docRef, defaultRoot, { merge: true });
+        // setDoc(docRef, defaultRoot, { merge: true });
       } else {
         // doc.data() will be undefined in this case
         console.log("No such document!");
