@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import styled from "styled-components";
+import Sample from "./Sample";
+import "@babel/standalone";
+
 import {
   getAuth,
   signInWithPopup,
@@ -19,6 +22,18 @@ const auth = getAuth();
 
 function App() {
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (window.Sample) {
+        console.log("Sample is found");
+        // setSample(window.Sample());
+      } else {
+        console.log("no Sample found");
+      }
+    }, 500);
+  }, []);
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -55,12 +70,15 @@ function App() {
   return (
     <div className="App">
       {/* <ProjectBuilder /> */}
+
       <DisplayArea>
-        <Center>{user ? <Tree uid={user.uid} /> : null}</Center>
+        {/* <Center>{user ? <Tree uid={user.uid} /> : null}</Center> */}
+        <Sample />
       </DisplayArea>
       <div style={{ position: "fixed" }}>
-        {user ? <div style={{ color: "white" }}>{user.uid}</div> : null}
+        {user ? <div style={{ color: "black" }}>{user.uid}</div> : null}
         <button onClick={() => GoogleSignIn()}>SignIn</button>
+
         <button onClick={() => GoogleSignOut()}>SignOut</button>
       </div>
     </div>
@@ -83,6 +101,6 @@ const DisplayArea = styled.div`
   height: 100%;
   width: 100%;
   overflow: scroll;
-  background-color: black;
+  /* background-color: black; */
   /* background-image: url("https://wallpaperaccess.com/full/2797527.jpg"); */
 `;

@@ -22,6 +22,24 @@ const borderRadius = 7;
 const neatMode = true;
 
 const colors = [
+  "#03588C",
+  "#0396A6",
+  "#04BFAD",
+  "#F28963",
+  "#F25C5C",
+  "#03588C",
+  "#0396A6",
+  "#04BFAD",
+  "#F28963",
+  "#F25C5C",
+  "#03588C",
+  "#0396A6",
+  "#04BFAD",
+  "#F28963",
+  "#F25C5C",
+];
+
+const colors2 = [
   "#264653",
   "#2A9D8E",
   "#E9C46B",
