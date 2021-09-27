@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import styled from "styled-components";
-import Sample from "./Sample";
-import "@babel/standalone";
 
 import {
   getAuth,
@@ -11,10 +9,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import { app } from "./firebase";
 
-import ProjectBuilder from "./DB_Build_Tools/project_tools/ProjectBuilder";
-import Branch from "./DB_Build_Tools/Tree/Branch";
 import Tree from "./DB_Build_Tools/Tree/Tree";
 
 const provider = new GoogleAuthProvider();
@@ -22,17 +17,6 @@ const auth = getAuth();
 
 function App() {
   const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (window.Sample) {
-        console.log("Sample is found");
-        // setSample(window.Sample());
-      } else {
-        console.log("no Sample found");
-      }
-    }, 500);
-  }, []);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -72,8 +56,7 @@ function App() {
       {/* <ProjectBuilder /> */}
 
       <DisplayArea>
-        {/* <Center>{user ? <Tree uid={user.uid} /> : null}</Center> */}
-        <Sample />
+        <Center>{user ? <Tree uid={user.uid} /> : null}</Center>
       </DisplayArea>
       <div style={{ position: "fixed" }}>
         {user ? <div style={{ color: "black" }}>{user.uid}</div> : null}

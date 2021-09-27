@@ -1,4 +1,5 @@
-import React from "react";
+import React,{useEffect} from "react";
+import {setDoc} from "firebase/firestore"
 
 function ImageManager(props) {
   return (

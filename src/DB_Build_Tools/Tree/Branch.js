@@ -80,6 +80,7 @@ function Branch(props) {
         unsub();
       }
     });
+    return null;
   }, []);
 
   // getting data from collection
@@ -108,7 +109,7 @@ function Branch(props) {
                 <Branch
                   id={doc.id}
                   name={doc.id}
-                  key={doc.id}
+                  key={`${newPath}_${doc.id}`}
                   path={newPath}
                   index={props.index + 1}
                   deleting={deleting}

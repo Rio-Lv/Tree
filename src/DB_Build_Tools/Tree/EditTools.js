@@ -115,7 +115,6 @@ function EditTools(props) {
           <div
             style={{
               display: "flex",
-
               flexDirection: value.length > 15 ? "column" : "row",
               marginBottom: value.length > 15 ? "3px" : "3px",
             }}
@@ -315,7 +314,13 @@ function EditTools(props) {
             name = editableText(key, value);
           } else if (key === "images") {
             // change this to another function
-            images = <ImageManager borderRadius={props.borderRadius} />;
+            console.log(typeof value);
+            images = (
+              <ImageManager
+                key={`${props.path}_${props.id}_ImageManager`}
+                borderRadius={props.borderRadius}
+              />
+            );
           } else {
             array.push(editableText(key, value));
           }
