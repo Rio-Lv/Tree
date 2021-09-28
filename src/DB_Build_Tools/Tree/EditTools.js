@@ -321,7 +321,9 @@ function EditTools(props) {
             // console.log(typeof value);
             images = (
               <ImageManager
-                id={`${props.path}_${props.id}_ImageManager`}
+                id={props.id}
+                path={props.path}
+                images={props.info.images}
                 key={`${props.path}_${props.id}_ImageManager`}
                 borderRadius={props.borderRadius}
                 list={value}

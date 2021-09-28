@@ -10,7 +10,7 @@ function Universe() {
       }
       universe.push(entity);
     }
-    return universe;
+    return universe; // connectors
   };
   useEffect(() => {
     const universe = createUniverse(4);
