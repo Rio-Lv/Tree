@@ -110,11 +110,17 @@ function Branch(props) {
                 style={whichMode()}
               >
                 <Branch
+                  uid={props.uid}
                   id={doc.id}
                   name={doc.id}
                   key={`${newPath}_${doc.id}_branch_key`}
                   path={newPath}
                   index={props.index + 1}
+                  directory={
+                    props.directory
+                      ? `${props.directory}/${props.name}`
+                      : `${props.name}`
+                  }
                   deleting={deleting}
                 ></Branch>
               </div>
@@ -181,6 +187,7 @@ function Branch(props) {
             }}
           >
             <EditTools
+              uid={props.uid}
               show={me}
               spacing={spacing}
               borderRadius={borderRadius}
@@ -188,6 +195,11 @@ function Branch(props) {
               id={props.id}
               path={props.path}
               deleting={deleting}
+              directory={
+                props.directory
+                  ? `${props.directory}/${props.name}`
+                  : `${props.name}`
+              }
             />
           </ColumnCenter>
 

@@ -1,8 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import { db, storage } from "../../firebase";
 
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+
 function ImageManager(props) {
+  const submitImage = (file, index) => {
+    console.log(props.uid);
+    // const storage = getStorage();
+    // const reference = ref(storage, file);
+    console.log(props.directory);
+
+    const storage = getStorage();
+    const storageRef = ref(storage, `${props.directory}/${props.id}_${index}`);
+
+    // 'file' comes from the Blob or File API
+    uploadBytes(storageRef, file).then((snapshot) => {
+      console.log("Uploaded a blob or file!");
+      getDownloadURL(storageRef)
+        .then((url) => {
+          const docRef = doc(db, props.path, props.id);
+          updateDoc(docRef, {
+            images: arrayUnion(url),
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+  };
   const createSubmitImage = () => {
     const imageStyle = {
       position: "absolute",
@@ -10,7 +48,7 @@ function ImageManager(props) {
       bottom: "-3px",
       width: "25px",
       height: "25px",
-      borderRadius: "7px",
+      borderRadius: "3px",
 
       backgroundColor: "#F2F2F2",
       boxSizing: "border-box",
@@ -36,9 +74,10 @@ function ImageManager(props) {
             const ref = doc(db, props.path, props.id);
 
             const Images = Array.from(e.target.files);
-            Images.forEach((image) => {
-              console.log(image);
-            });
+
+            for (let i = 0; i < Images.length; i++) {
+              submitImage(Images[i], i);
+            }
           }}
         />
 
@@ -48,6 +87,7 @@ function ImageManager(props) {
       </div>
     );
   };
+
   const createImage = (url, index, keyPart) => {
     const imageStyle = {
       position: "relative",
@@ -59,6 +99,7 @@ function ImageManager(props) {
       marginLeft: "6px",
       marginBottom: "3px",
       marginTop: "3px",
+      backgroundSize: "cover",
       backgroundImage: `url(${url})`,
     };
     const closeButtonStyle = {
@@ -76,6 +117,14 @@ function ImageManager(props) {
           style={closeButtonStyle}
           onClick={() => {
             console.log(url);
+            const reference = doc(db, props.path, props.id);
+            updateDoc(reference, {
+              images: arrayRemove(url),
+            });
+            const httpsReference = ref(storage, url);
+            deleteObject(httpsReference)
+              .then(() => console.log("deleted"))
+              .catch((err) => console.log(err));
           }}
         >
           +
@@ -83,7 +132,6 @@ function ImageManager(props) {
       </div>
     );
   };
-
   const createRow = (index, urlList) => {
     const row = [];
     if (urlList.length > 0) {
@@ -124,7 +172,6 @@ function ImageManager(props) {
     }
     return fullArray;
   };
-
   const createGrid = (inputList) => {
     const split = splitter(inputList, 2);
     // console.log(split, "split");

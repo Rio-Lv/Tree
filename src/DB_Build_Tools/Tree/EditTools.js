@@ -321,12 +321,14 @@ function EditTools(props) {
             // console.log(typeof value);
             images = (
               <ImageManager
+                uid={props.uid}
                 id={props.id}
                 path={props.path}
                 images={props.info.images}
                 key={`${props.path}_${props.id}_ImageManager`}
                 borderRadius={props.borderRadius}
                 list={value}
+                directory={props.directory}
               />
             );
           } else {

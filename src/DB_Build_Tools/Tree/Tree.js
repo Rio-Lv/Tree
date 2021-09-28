@@ -73,6 +73,7 @@ function Tree(props) {
       <Branch
         name={"root"}
         id={"root"}
+        uid={props.uid}
         path={`${userCollectionPath}/root`}
         index={0}
       ></Branch>

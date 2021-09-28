@@ -37,7 +37,7 @@ function BuildTools(props) {
         {
           id: text,
           name: text,
-          images: "",
+          images: [],
         },
         { merge: true }
       );
