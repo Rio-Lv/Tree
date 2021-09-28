@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import styled from "styled-components";
-
+import Universe from "./Universe";
 import {
   getAuth,
   signInWithPopup,
@@ -55,6 +55,7 @@ function App() {
     <div className="App">
       {/* <ProjectBuilder /> */}
 
+      <Universe />
       <DisplayArea>
         <Center>{user ? <Tree uid={user.uid} /> : null}</Center>
       </DisplayArea>

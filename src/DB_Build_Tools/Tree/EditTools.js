@@ -86,7 +86,10 @@ function EditTools(props) {
 
       if (key === "id") {
         return (
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div
+            key={`${uniqueKeyName}_editable_text`}
+            style={{ display: "flex", flexDirection: "row" }}
+          >
             <div style={{ fontSize: "15px" }} id={uniqueKeyName}>
               {key} : &#160;
             </div>
@@ -113,6 +116,7 @@ function EditTools(props) {
       } else {
         return (
           <div
+            key={`${uniqueKeyName}_editable_text`}
             style={{
               display: "flex",
               flexDirection: value.length > 15 ? "column" : "row",
@@ -314,11 +318,13 @@ function EditTools(props) {
             name = editableText(key, value);
           } else if (key === "images") {
             // change this to another function
-            console.log(typeof value);
+            // console.log(typeof value);
             images = (
               <ImageManager
+                id={`${props.path}_${props.id}_ImageManager`}
                 key={`${props.path}_${props.id}_ImageManager`}
                 borderRadius={props.borderRadius}
+                list={value}
               />
             );
           } else {

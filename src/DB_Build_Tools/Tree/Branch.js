@@ -105,11 +105,14 @@ function Branch(props) {
         if (collection.size > 0) {
           collection.forEach((doc) => {
             list.push(
-              <div style={whichMode()}>
+              <div
+                key={`${newPath}_${doc.id}_branch_key_div`}
+                style={whichMode()}
+              >
                 <Branch
                   id={doc.id}
                   name={doc.id}
-                  key={`${newPath}_${doc.id}`}
+                  key={`${newPath}_${doc.id}_branch_key`}
                   path={newPath}
                   index={props.index + 1}
                   deleting={deleting}
