@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { doc, updateDoc, deleteField } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../../firebase";
 import ImageManager from "./ImageManager";
 
 const EditColor = "#0e76ec";
@@ -97,8 +97,11 @@ function EditTools(props) {
               style={{
                 fontSize: value.length > 15 ? "12px" : "15px",
                 height: value.length > 15 ? "300px" : "24px",
-                marginBottom: "3px",
+                marginBottom: "2px",
                 backgroundColor: "white",
+                textIndent: "4px",
+                borderRadius: `${props.borderRadius}px`,
+                marginLeft: "-1px",
               }}
               id={uniqueKeyInput}
               key={uniqueKeyInput}
@@ -151,9 +154,13 @@ function EditTools(props) {
                         : "50px"
                       : "30px"
                     : "25px",
-                width: value.length > 15 ? "170px" : "130px",
+                width: value.length > 15 ? "170px" : "104px",
                 fontSize: value.length > 15 ? "12px" : "15px",
                 resize: value.length > 15 ? "vertical" : "none",
+                textIndent: value.length > 15 ? "0px" : "4px",
+                borderRadius: `${props.borderRadius}px`,
+                marginLeft: "-1px",
+                marginBottom: "2px",
               }}
               id={uniqueKeyInput}
               className={unique_class_input}
@@ -199,6 +206,7 @@ function EditTools(props) {
   const addProperty = () => {
     const add_title = document.getElementById(uniqueKeyAddPropertyName);
     const add_value = document.getElementById(uniqueKeyAddPropertyValue);
+
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div
@@ -213,7 +221,7 @@ function EditTools(props) {
           <AddInput
             maxLength={"15"}
             style={{
-              width: adding ? "60px" : "0",
+              width: adding ? "47px" : "0",
               marginRight: adding ? "5px" : "-2px",
               marginLeft: "-7px",
               border: "none",
@@ -244,7 +252,7 @@ function EditTools(props) {
           </div>
           <AddInput
             style={{
-              width: adding ? "80px" : "0",
+              width: adding ? "100px" : "0",
               marginLeft: adding ? "5px" : "0px",
               border: "none",
               backgroundColor: "#F2F2F2",
@@ -296,6 +304,59 @@ function EditTools(props) {
     );
   };
 
+  const editableArray = (key, array) => {
+    const itemStyle = {
+      fontSize: "12px",
+      textIndent: "6px",
+      display: "flex",
+      flexDirection: "row",
+    };
+
+    const itemIndexStyle = {
+      position: "relative",
+      fontSize: "12px",
+      textAlign: "center",
+      width: "20px",
+      // border: "3px solid black",
+      // backgroundColor: "pink",
+    };
+    const listStyle = {
+      backgroundColor: "#f2f2f2",
+      paddingTop: "3px",
+      paddingBottom: "3px",
+      borderRadius: `${props.borderRadius}px`,
+      marginLeft: "5px",
+    };
+    const list = [];
+    console.log("array", array);
+    for (let i = 0; i < array.length; i++) {
+      const uniqueArrayKeyName = `${props.path}_${props.id}_${key}_name_${i}`;
+      const uniqueArrayKeyInput = `${props.path}_${props.id}_${key}_input_${i}`;
+      list.push(
+        <div key={uniqueArrayKeyName} style={itemStyle}>
+          <div style={itemIndexStyle}>{i}.</div>
+
+          <ArrayInput
+            defaultValue={array[i]}
+            onChange={() => {
+              var timer;
+              clearTimeout(timer);
+              timer = setTimeout(() => {
+                console.log("going off");
+              }, 3000);
+            }}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div key={key} style={{ display: "flex", flexDirection: "row" }}>
+        <div style={{ fontSize: "15px", marginLeft: "3px" }}>{key}</div>
+        <div style={listStyle}>{list}</div>
+      </div>
+    );
+  };
   // this sorts the data, id and name on top, images bottom, rest alphabetical
   useEffect(() => {
     if (props.info) {
@@ -316,21 +377,25 @@ function EditTools(props) {
             id = editableText(key, value);
           } else if (key === "name") {
             name = editableText(key, value);
-          } else if (key === "images") {
-            // change this to another function
-            // console.log(typeof value);
-            images = (
-              <ImageManager
-                uid={props.uid}
-                id={props.id}
-                path={props.path}
-                images={props.info.images}
-                key={`${props.path}_${props.id}_ImageManager`}
-                borderRadius={props.borderRadius}
-                list={value}
-                directory={props.directory}
-              />
-            );
+          } else if (Array.isArray(value)) {
+            if (key === "images") {
+              // change this to another function
+              // console.log(typeof value);
+              images = (
+                <ImageManager
+                  uid={props.uid}
+                  id={props.id}
+                  path={props.path}
+                  images={props.info.images}
+                  key={`${props.path}_${props.id}_ImageManager`}
+                  borderRadius={props.borderRadius}
+                  list={value}
+                  directory={props.directory}
+                />
+              );
+            } else {
+              array.push(editableArray(key, value));
+            }
           } else {
             array.push(editableText(key, value));
           }
@@ -432,6 +497,21 @@ const Input = styled.textarea`
   }
 `;
 const AddInput = styled.input`
+  transition: 0.3s;
+  :focus {
+    outline: none;
+  }
+`;
+const ArrayInput = styled.input`
+  font-size: 12px;
+  text-indent: 6px;
+  max-width: 92px;
+  border: none;
+  height: 15px;
+  margin-top: 3px;
+  border-radius: 3px;
+  margin-left: 3px;
+  margin-right: 5px;
   transition: 0.3s;
   :focus {
     outline: none;

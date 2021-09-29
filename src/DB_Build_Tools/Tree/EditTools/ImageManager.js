@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   doc,
   getDoc,
@@ -6,7 +7,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
-import { db, storage } from "../../firebase";
+import { db, storage } from "../../../firebase";
 
 import {
   getStorage,
@@ -24,7 +25,10 @@ function ImageManager(props) {
     console.log(props.directory);
 
     const storage = getStorage();
-    const storageRef = ref(storage, `${props.directory}/${props.id}_${index}`);
+    const storageRef = ref(
+      storage,
+      `${props.directory}/${props.id}_${uuidv4()}`
+    );
 
     // 'file' comes from the Blob or File API
     uploadBytes(storageRef, file).then((snapshot) => {
@@ -48,7 +52,7 @@ function ImageManager(props) {
       bottom: "-3px",
       width: "25px",
       height: "25px",
-      borderRadius: "3px",
+      borderRadius: `${props.borderRadius}px`,
 
       backgroundColor: "#F2F2F2",
       boxSizing: "border-box",

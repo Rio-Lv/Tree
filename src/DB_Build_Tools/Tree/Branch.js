@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { getStorage, ref, listAll, deleteObject } from "firebase/storage";
 import styled from "styled-components";
 
 import BuildTools from "./BuildTools";
 
-import EditTools from "./EditTools";
+import EditTools from "./EditTools/EditTools";
 
 import {
   collection,
@@ -14,7 +15,7 @@ import {
   orderBy,
   getDocs,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db, storage } from "../../firebase";
 
 const spacing = 4;
 const borderRadius = 7;
@@ -147,7 +148,25 @@ function Branch(props) {
       };
       console.log("waiting to delete", props.id);
 
-      deleteBranch(); // Deletes this branch if child branches are gone
+      const directory = props.directory
+        ? `${props.directory}/${props.name}`
+        : `${props.name}`;
+
+      const listRef = ref(storage, directory);
+
+      // Find all the prefixes and items.
+      listAll(listRef)
+        .then((res) => {
+          res.items.forEach((itemRef) => {
+            deleteObject(itemRef);
+            console.log("deleting", itemRef);
+          });
+          deleteBranch(); // Deletes this branch if child branches are gone
+        })
+        .catch((error) => {
+          // Uh-oh, an error occurred!
+          console.log(error);
+        });
     }
     return null;
   }, [props.path, props.id, props.index, deleting, collectionEmpty]);
