@@ -317,13 +317,32 @@ function EditTools(props) {
 
   const editableArray = (key) => {
     const array = props.info[key];
+    const reference = doc(db, props.path, props.id);
+
+    const updateArray = () => {
+      getDoc(reference).then((doc) => {
+        if (array.length > 0) {
+          const merger = {};
+          merger[key] = array;
+          setDoc(reference, merger, { merge: true }).then(() => {
+            console.log("merged");
+          });
+        } else {
+          const itemRemoved = doc.data();
+          delete itemRemoved[key];
+          setDoc(reference, itemRemoved).then(() => {
+            console.log("deleted");
+          });
+        }
+      });
+    };
+
     const itemStyle = {
       fontSize: "12px",
       textIndent: "6px",
       display: "flex",
       flexDirection: "row",
     };
-
     const itemIndexStyle = {
       position: "relative",
       fontSize: "12px",
@@ -355,33 +374,20 @@ function EditTools(props) {
           <ArrayInput
             id={uniqueArrayKeyInput}
             defaultValue={array[i]}
+            onfocusout={(e) => {
+              console.log("focus out");
+            }}
             onKeyDown={(e) => {
-              const reference = doc(db, props.path, props.id);
               if (e.code === "Enter") {
                 const val = document.getElementById(uniqueArrayKeyInput).value;
                 document.getElementById(uniqueArrayKeyInput).style.color =
                   "black";
                 if (val === "") {
-                  getDoc(reference).then((doc) => {
-                    const list = doc.data()[key];
-                    list.splice(i, 1);
-                    console.log(list);
-                    const merger = {};
-                    merger[key] = list;
-                    console.log(merger, "merger");
-                    setDoc(reference, merger, { merge: true }).then(() => {});
-                  });
+                  array.splice(i, 1);
+                  updateArray();
                 } else {
-                  getDoc(reference).then((doc) => {
-                    const list = doc.data()[key];
-                    list[i] = val;
-                    console.log(list);
-                    const merger = {};
-                    merger[key] = list;
-                    setDoc(reference, merger, { merge: true }).then(() => {
-                      console.log("merged");
-                    });
-                  });
+                  array[i] = val;
+                  updateArray();
                 }
               }
             }}
@@ -417,17 +423,8 @@ function EditTools(props) {
               const id = `${props.path}_${props.id}_${key}_array_input_add`;
               const val = document.getElementById(id).value;
               if (val !== "") {
-                const reference = doc(db, props.path, props.id);
-                const obj = {};
-
-                getDoc(reference).then((doc) => {
-                  const list = doc.data()[key];
-                  list.push(val);
-                  obj[key] = list;
-                  setDoc(reference, obj, { merge: true });
-                });
-
-                updateDoc(reference, obj);
+                array.push(val);
+                updateArray();
                 document.getElementById(id).value = "";
               }
             }
