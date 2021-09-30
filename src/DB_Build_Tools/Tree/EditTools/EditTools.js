@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { doc, updateDoc, deleteField } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteField,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import { db } from "../../../firebase";
 import ImageManager from "./ImageManager";
 
@@ -8,6 +16,7 @@ const EditColor = "#0e76ec";
 const DeleteColor = "#f13737";
 
 function EditTools(props) {
+  const [info, setInfo] = useState(props.info);
   const [list, setList] = useState([]); // with in div and styled
   const [images, setImages] = useState();
   const [adding, setAdding] = useState(false);
@@ -304,7 +313,8 @@ function EditTools(props) {
     );
   };
 
-  const editableArray = (key, array) => {
+  const editableArray = (key) => {
+    const array = props.info[key];
     const itemStyle = {
       fontSize: "12px",
       textIndent: "6px",
@@ -326,39 +336,119 @@ function EditTools(props) {
       paddingBottom: "3px",
       borderRadius: `${props.borderRadius}px`,
       marginLeft: "5px",
+      width: "120px",
     };
     const list = [];
     console.log("array", array);
     for (let i = 0; i < array.length; i++) {
-      const uniqueArrayKeyName = `${props.path}_${props.id}_${key}_name_${i}`;
-      const uniqueArrayKeyInput = `${props.path}_${props.id}_${key}_input_${i}`;
+      const uniqueArrayKeyName = `${props.path}_${props.id}_${key}_array_name_${i}`;
+      const uniqueArrayKeyInput = `${props.path}_${props.id}_${key}_array_input_${i}`;
+      const indexKey = uniqueArrayKeyName + "_index";
       list.push(
-        <div key={uniqueArrayKeyName} style={itemStyle}>
-          <div style={itemIndexStyle}>{i}.</div>
+        <div key={uniqueArrayKeyName} id={uniqueArrayKeyName} style={itemStyle}>
+          <div key={indexKey} style={itemIndexStyle}>
+            {i + 1}.
+          </div>
 
           <ArrayInput
+            id={uniqueArrayKeyInput}
             defaultValue={array[i]}
-            onChange={() => {
-              var timer;
-              clearTimeout(timer);
-              timer = setTimeout(() => {
-                console.log("going off");
-              }, 3000);
+            onKeyDown={(e) => {
+              const reference = doc(db, props.path, props.id);
+              if (e.code === "Enter") {
+                const val = document.getElementById(uniqueArrayKeyInput).value;
+                document.getElementById(uniqueArrayKeyInput).style.color =
+                  "black";
+                if (val === "") {
+                  getDoc(reference).then((doc) => {
+                    const list = doc.data()[key];
+                    list.splice(i, 1);
+                    console.log(list);
+                    const merger = {};
+                    merger[key] = list;
+                    console.log(merger, "merger");
+                    setDoc(reference, merger, { merge: true }).then(() => {
+                      document.getElementById(
+                        uniqueArrayKeyName
+                      ).style.display = "none";
+                    });
+                  });
+                } else {
+                  getDoc(reference).then((doc) => {
+                    const list = doc.data()[key];
+                    list[i] = val;
+                    console.log(list);
+                    const merger = {};
+                    merger[key] = list;
+                    setDoc(reference, merger, { merge: true }).then(() => {
+                      console.log("merged");
+                    });
+                  });
+                }
+              }
+            }}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === "") {
+                document.getElementById(uniqueArrayKeyName).style.color =
+                  DeleteColor;
+              } else {
+                document.getElementById(uniqueArrayKeyName).style.color =
+                  "black";
+                document.getElementById(uniqueArrayKeyInput).style.color =
+                  EditColor;
+              }
             }}
           />
         </div>
       );
     }
+    // after the info then add one more that adds to the array
+    list.push(
+      <div
+        key={`${props.path}_${props.id}_${key}_array_name_add`}
+        style={itemStyle}
+      >
+        <div style={itemIndexStyle}>+</div>
+
+        <ArrayInput
+          id={`${props.path}_${props.id}_${key}_array_input_add`}
+          placeholder={"add new"}
+          onKeyDown={(e) => {
+            if (e.code === "Enter") {
+              const id = `${props.path}_${props.id}_${key}_array_input_add`;
+              const val = document.getElementById(id).value;
+              if (val !== "") {
+                const reference = doc(db, props.path, props.id);
+                const obj = {};
+
+                getDoc(reference).then((doc) => {
+                  const list = doc.data()[key];
+                  list.push(val);
+                  obj[key] = list;
+                  setDoc(reference, obj, { merge: true });
+                });
+
+                updateDoc(reference, obj);
+                document.getElementById(id).value = "";
+              }
+            }
+          }}
+          onChange={() => {}}
+        />
+      </div>
+    );
 
     return (
-      <div key={key} style={{ display: "flex", flexDirection: "row" }}>
-        <div style={{ fontSize: "15px", marginLeft: "3px" }}>{key}</div>
+      <div key={key}>
+        <div style={{ fontSize: "15px", marginLeft: "0px" }}>{key}</div>
         <div style={listStyle}>{list}</div>
       </div>
     );
   };
   // this sorts the data, id and name on top, images bottom, rest alphabetical
   useEffect(() => {
+    console.log(props.info);
     if (props.info) {
       const pushItems = () => {
         const array = [];
