@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { v4 as uuid } from "uuid";
+
 import styled from "styled-components";
 import {
   doc,
@@ -341,8 +343,8 @@ function EditTools(props) {
     const list = [];
     console.log("array", array);
     for (let i = 0; i < array.length; i++) {
-      const uniqueArrayKeyName = `${props.path}_${props.id}_${key}_array_name_${i}`;
-      const uniqueArrayKeyInput = `${props.path}_${props.id}_${key}_array_input_${i}`;
+      const uniqueArrayKeyName = uuid();
+      const uniqueArrayKeyInput = uuid();
       const indexKey = uniqueArrayKeyName + "_index";
       list.push(
         <div key={uniqueArrayKeyName} id={uniqueArrayKeyName} style={itemStyle}>
@@ -367,11 +369,7 @@ function EditTools(props) {
                     const merger = {};
                     merger[key] = list;
                     console.log(merger, "merger");
-                    setDoc(reference, merger, { merge: true }).then(() => {
-                      document.getElementById(
-                        uniqueArrayKeyName
-                      ).style.display = "none";
-                    });
+                    setDoc(reference, merger, { merge: true }).then(() => {});
                   });
                 } else {
                   getDoc(reference).then((doc) => {
