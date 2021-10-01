@@ -163,7 +163,7 @@ const InputBox = styled.div`
 
 const Input = styled.input`
   height: 100%;
-  margin-top: 0px;
+  margin-top: -0.5px;
   transform: translate(0px, 0px);
   /* Align radii */
   border-bottom-left-radius: 5px;
@@ -171,7 +171,7 @@ const Input = styled.input`
   transition: 0.3s;
   border: 2px solid white;
   box-sizing: border-box;
-  text-indent: 12px;
+  text-indent: 4px;
   :focus {
     outline: none;
   }

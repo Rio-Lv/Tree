@@ -42,7 +42,7 @@ function EditTools(props) {
   useEffect(() => {
     if (!props.deleting) {
       if (props.show === false && prevshow === true) {
-        console.log("running push data", props.id);
+        // console.log("running push data", props.id);
         pushData();
       }
     }
@@ -54,9 +54,19 @@ function EditTools(props) {
       if (add_title.value !== null && add_value.value !== null) {
         const ref = doc(db, props.path, props.id);
         var newProperty = {};
+        var val = add_value.value;
+        if (val[0] === "[" && val[val.length - 1] === "]") {
+          const noFirst = val.slice(0, -1); //remove [
+          const noLast = noFirst.substring(1); // remove ]
+          const arrayVal = noLast.split(",");
+          console.log(arrayVal, "arrayVal");
 
-        newProperty[add_title.value] = add_value.value;
-        await updateDoc(ref, newProperty);
+          newProperty[add_title.value] = arrayVal;
+          await updateDoc(ref, newProperty);
+        } else {
+          newProperty[add_title.value] = val;
+          await updateDoc(ref, newProperty);
+        }
       }
     }
   };
@@ -95,6 +105,8 @@ function EditTools(props) {
       const uniqueKeyInput = `${props.path}_${props.id}_${key}_input`;
       const uniqueKeyName = `${props.path}_${props.id}_${key}_name`;
 
+      const L = key.length + value.length;
+
       if (key === "id") {
         return (
           <div
@@ -104,27 +116,17 @@ function EditTools(props) {
             <div style={{ fontSize: "15px" }} id={uniqueKeyName}>
               {key} : &#160;
             </div>
-            <Input
+            <div
               style={{
-                fontSize: value.length > 15 ? "12px" : "15px",
-                height: value.length > 15 ? "300px" : "24px",
-                marginBottom: "2px",
-                backgroundColor: "white",
-                textIndent: "4px",
+                fontSize: "12px",
+                width: "155px",
+                lineHeight: "20px",
+                marginTop: "3px",
                 borderRadius: `${props.borderRadius}px`,
-                marginLeft: "-1px",
               }}
-              id={uniqueKeyInput}
-              key={uniqueKeyInput}
-              type="text"
-              name={uniqueKeyInput}
-              defaultValue={value}
-              readOnly
-              onChange={(e) => {
-                e.preventDefault();
-                // console.log(e.target.value);
-              }}
-            ></Input>
+            >
+              {value}
+            </div>
           </div>
         );
       } else {
@@ -133,8 +135,8 @@ function EditTools(props) {
             key={`${uniqueKeyName}_editable_text`}
             style={{
               display: "flex",
-              flexDirection: value.length > 15 ? "column" : "row",
-              marginBottom: value.length > 15 ? "3px" : "3px",
+              flexDirection: L > 25 ? "column" : "row",
+              marginBottom: L > 25 ? "3px" : "3px",
             }}
           >
             <div
@@ -153,25 +155,25 @@ function EditTools(props) {
               style={{
                 whiteSpace: "normal",
                 // wordWrap: "break-word",
-                backgroundColor: value.length > 15 ? "#f2f2f2" : "#f2f2f2",
+                backgroundColor: L > 25 ? "#f2f2f2" : "#f2f2f2",
                 // how much space is needed for the text
                 height:
-                  value.length > 15
-                    ? value.length > 25
-                      ? value.length > 45
-                        ? value.length > 75
+                  L > 25
+                    ? L > 35
+                      ? L > 55
+                        ? L > 75
                           ? "100px"
                           : "60px"
                         : "50px"
-                      : "30px"
-                    : "25px",
-                width: value.length > 15 ? "170px" : "104px",
-                fontSize: value.length > 15 ? "12px" : "15px",
-                resize: value.length > 15 ? "vertical" : "none",
-                textIndent: value.length > 15 ? "0px" : "4px",
+                      : "35px"
+                    : "20px",
+                width: L > 15 ? "170px" : "104px",
+                fontSize: "12px",
+                resize: L > 15 ? "vertical" : "none",
+                textIndent: L > 15 ? "0px" : "4px",
                 borderRadius: `${props.borderRadius}px`,
                 marginLeft: "-1px",
-                marginBottom: "2px",
+                marginTop: "4px",
               }}
               id={uniqueKeyInput}
               className={unique_class_input}
@@ -230,7 +232,6 @@ function EditTools(props) {
           }}
         >
           <AddInput
-            maxLength={"15"}
             style={{
               width: adding ? "47px" : "0",
               marginRight: adding ? "5px" : "-2px",
@@ -325,13 +326,13 @@ function EditTools(props) {
           const merger = {};
           merger[key] = array;
           setDoc(reference, merger, { merge: true }).then(() => {
-            console.log("merged");
+            // console.log("merged");
           });
         } else {
           const itemRemoved = doc.data();
           delete itemRemoved[key];
           setDoc(reference, itemRemoved).then(() => {
-            console.log("deleted");
+            // console.log("deleted");
           });
         }
       });
@@ -360,7 +361,7 @@ function EditTools(props) {
       width: "120px",
     };
     const list = [];
-    console.log("array", array);
+    // console.log("array", array);
     for (let i = 0; i < array.length; i++) {
       const uniqueArrayKeyName = uuid();
       const uniqueArrayKeyInput = uuid();
@@ -374,9 +375,6 @@ function EditTools(props) {
           <ArrayInput
             id={uniqueArrayKeyInput}
             defaultValue={array[i]}
-            onfocusout={(e) => {
-              console.log("focus out");
-            }}
             onKeyDown={(e) => {
               if (e.code === "Enter") {
                 const val = document.getElementById(uniqueArrayKeyInput).value;
@@ -435,7 +433,7 @@ function EditTools(props) {
     );
 
     return (
-      <div key={key}>
+      <div key={key} style={{ marginBottom: "6px" }}>
         <div style={{ fontSize: "15px", marginLeft: "0px" }}>{key}</div>
         <div style={listStyle}>{list}</div>
       </div>
@@ -443,7 +441,7 @@ function EditTools(props) {
   };
   // this sorts the data, id and name on top, images bottom, rest alphabetical
   useEffect(() => {
-    console.log(props.info);
+    // console.log(props.info);
     if (props.info) {
       const pushItems = () => {
         const array = [];
@@ -510,7 +508,7 @@ function EditTools(props) {
           opacity: props.show ? "100%" : "0%",
           // transform: `translate(0,  ${props.spacing}px)`,
           width: props.show ? "300px" : "0px",
-          height: props.show ? "100px" : "0px",
+          height: props.show ? "200px" : "0px",
         }}
       >
         {props.show ? (

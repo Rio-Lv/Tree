@@ -2,27 +2,14 @@ import React, { useState, useEffect } from "react";
 import Branch from "./Branch";
 import { db } from "../../firebase";
 
-import {
-  collection,
-  query,
-  onSnapshot,
-  doc,
-  getDoc,
-  setDoc,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 import styled from "styled-components";
 function Tree(props) {
-  // takes a collection name to start of
-  // always starts at collection level
-  const [name, setName] = useState(props.name);
-  const [tree, setTree] = useState([]);
-  const [seed, setSeed] = useState([]);
-
+  const [data, setData] = useState([]);
   const [userCollectionPath, setUserCollectionPath] = useState(
     `trees/users/${props.uid}/${props.uid}`
   );
-
   useEffect(() => {
     setUserCollectionPath(`trees/users/${props.uid}/${props.uid}`);
   }, [props.uid]);
@@ -42,7 +29,7 @@ function Tree(props) {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
+        // console.log("Document data:", docSnap.data());
         // setDoc(docRef, defaultRoot, { merge: true });
       } else {
         // doc.data() will be undefined in this case
@@ -54,27 +41,18 @@ function Tree(props) {
   }, [userCollectionPath]);
 
   useEffect(() => {
-    setName(props.name);
-  }, [props.name]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      console.log("seed", seed);
-    }, 3000);
-  }, [seed]);
-
-  // collection in this document
-  useEffect(() => {
-    // collectionToArray("root");
-  }, []);
+    console.log(data);
+  }, [data]);
 
   return (
     <Trunk>
       <Branch
+        setData={setData}
         name={"root"}
         id={"root"}
         uid={props.uid}
         path={`${userCollectionPath}/root`}
+        directory={`Tree/users/${props.uid}`}
         index={0}
       ></Branch>
     </Trunk>

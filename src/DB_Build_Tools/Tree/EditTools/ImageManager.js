@@ -20,17 +20,13 @@ import {
 function ImageManager(props) {
   const submitImage = (file, index) => {
     console.log(props.uid);
-    // const storage = getStorage();
-    // const reference = ref(storage, file);
     console.log(props.directory);
-
     const storage = getStorage();
     const storageRef = ref(
       storage,
       `${props.directory}/${props.id}_${uuidv4()}`
     );
 
-    // 'file' comes from the Blob or File API
     uploadBytes(storageRef, file).then((snapshot) => {
       console.log("Uploaded a blob or file!");
       getDownloadURL(storageRef)

@@ -13,7 +13,6 @@ import {
   doc,
   deleteDoc,
   orderBy,
-  getDocs,
 } from "firebase/firestore";
 import { db, storage } from "../../firebase";
 
@@ -55,12 +54,15 @@ const colors2 = [
 // can add more colors to go for deeper layers
 function Branch(props) {
   const [me, setMe] = useState(false);
+  const [listen, setListen] = useState(true);
 
   const [branches, setBranches] = useState([]);
   const [collectionEmpty, setCollectionEmpty] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const [info, setInfo] = useState({});
+
+  const directory = `${props.directory}/${props.name}`;
 
   //Check if parent is being deleted
   useEffect(() => {
@@ -72,6 +74,34 @@ function Branch(props) {
   }, [props.deleting]);
 
   useEffect(() => {
+    props.setData((data) => {
+      const newData = data;
+      newData[directory] = info;
+      return newData;
+    });
+    return null;
+  }, [info]);
+
+  // deactivate listeners after init
+  useEffect(() => {
+    setTimeout(() => {
+      setListen(false);
+    }, 3000);
+    return null;
+  }, []);
+
+  //control the listener
+  useEffect(() => {
+    if (me === true) {
+      setListen(true);
+      // console.log("subbing");
+    } else {
+      setListen(false);
+      // console.log("unsubbing");
+    }
+  }, [me]);
+
+  useEffect(() => {
     const unsub = onSnapshot(doc(db, props.path, props.id), (doc) => {
       // console.log("unsub forming now");
       if (doc.exists) {
@@ -81,13 +111,19 @@ function Branch(props) {
         unsub();
       }
     });
+    if (listen === false) {
+      unsub();
+    } else {
+      console.log("listening ", props.id);
+    }
     return null;
-  }, []);
+  }, [listen]);
 
   // getting data from collection
   useEffect(() => {
     const newPath = `${props.path}/${props.id}/${props.id}`; //path to its collection
     const q = query(collection(db, newPath), orderBy("name"));
+
     const unsubscribe = onSnapshot(
       q,
       (collection) => {
@@ -111,17 +147,15 @@ function Branch(props) {
                 style={whichMode()}
               >
                 <Branch
+                  listen={listen}
+                  setData={props.setData}
                   uid={props.uid}
                   id={doc.id}
                   name={doc.id}
                   key={`${newPath}_${doc.id}_branch_key`}
                   path={newPath}
                   index={props.index + 1}
-                  directory={
-                    props.directory
-                      ? `${props.directory}/${props.name}`
-                      : `${props.name}`
-                  }
+                  directory={directory}
                   deleting={deleting}
                 ></Branch>
               </div>
@@ -148,10 +182,6 @@ function Branch(props) {
       };
       console.log("waiting to delete", props.id);
 
-      const directory = props.directory
-        ? `${props.directory}/${props.name}`
-        : `${props.name}`;
-
       const listRef = ref(storage, directory);
 
       // Find all the prefixes and items.
@@ -168,8 +198,11 @@ function Branch(props) {
           console.log(error);
         });
     }
+    if (listen === false) {
+      unsubscribe();
+    }
     return null;
-  }, [props.path, props.id, props.index, deleting, collectionEmpty]);
+  }, [props.path, props.id, props.index, deleting, collectionEmpty, listen]);
 
   return (
     <div>
